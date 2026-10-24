@@ -31,7 +31,7 @@ self|.|-
 - lang = nix + bash. paradigm `docs/NIX.md`: nixfmt, statix, deadnix, nixpkgs follows nixpkgs-lock, 1 nixpkgs in lock graph, flake check on push only when push touches what flake reads. `docs/SHELL.md`: one script one job, ⊥ shell functions except `info` `warn` `fatal`, extract ⊥ embed (⊥ inline shell in `.nix`), mirrored bats both ways, TDD order on push, env-var seams named in script header.
 - root input = `nixpkgs-lock` only; `nixpkgs.follows = "nixpkgs-lock/nixpkgs"` (D1). gate tools (hk from `nix-hk`, linters) in `dev/flake.nix`, ⊥ root.
 - pin = `nixpkgs-lock` `e95fdd0` → nixpkgs 26.05 `da6dc0e` (2026-10-24). follows `nixpkgs-lock` bumps.
-- systems: `aarch64-darwin`, `x86_64-darwin`, `x86_64-linux`, `aarch64-linux` (`paradigm/V28`): pre-push native on owner Macs (both archs), CI the rest. ⊥ Windows.
+- systems: `aarch64-darwin`, `x86_64-darwin`, `x86_64-linux`, `aarch64-linux` (`paradigm/V28`): pre-push native on owner Macs (both archs), CI the rest; CI only evaluates x86_64-darwin, owner Intel Mac builds it (owner OK 2026-10-24). ⊥ Windows.
 - source = GitHub release asset of `CodebuffAI/codebuff-community` tag `v<version>`, `fetchurl` by URL + SRI hash (D2). ⊥ `codebuff.com/api/releases` (redirector), ⊥ npm `codebuff` (launcher). ∀ hash: source = `nix store prefetch-file` of asset URL, ! ≡ GitHub API asset `digest` (sha256); disagree → bump refuses.
 - ∀ hash lives in 1 file `pkgs/codebuff/sources.json`, written only by bump (D5).
 - version: newest by semver among tags `^v[0-9]+\.[0-9]+\.[0-9]+$` w/ `prerelease = false` & `draft = false` (D5). repo also carries `freebuff-v*`, `freebuff-desktop-v*` & `v*-beta.N` prereleases; GitHub "Latest" = `freebuff-v0.2.34` (R1) ∴ `releases/latest` ⊥ used. current = `1.0.688`.
@@ -41,9 +41,9 @@ self|.|-
 - `x86_64-linux` baseline (non-AVX2) build = 2nd package `codebuff-baseline`; default `codebuff` = AVX2 build, as upstream launcher picks on AVX2 CPU. launcher's auto-fallback ⊥ reproduced (pure eval ⊥ read `/proc/cpuinfo`); README says when to pick baseline. agent decision 2026-10-24 (prompt delegated), owner review T15.
 - telemetry: PostHog key & host baked as literals, env `prod` baked (R10) ∴ ⊥ off switch exists; ⊥ patch (D3 & Bun payload). log shipping has switch `CODEBUFF_SHIP_LOGS=false`; package arg `shipLogs ? true`: default = upstream behaviour, logs ship; turning them off is the opt-in (`shipLogs = false`), fleet precedent. README states both. agent decision 2026-10-24, owner review T15.
 - `meta.license = lib.licenses.asl20`: binary compiled from `CodebuffAI/codebuff` `cli/` (Apache-2.0; `cli/package.json` ⊥ own licence); release repo MIT covers its files, npm launcher MIT ⊥ shipped (R12). `sourceProvenance = binaryNativeCode`. agent decision 2026-10-24 (prompt delegated), owner review T15.
-- cache `pr0d1r2.cachix.org` (D6): push from CI on `main` only; ⊆ Linux `codebuff` & `codebuff-baseline` closures; ⊥ darwin; ⊥ fork PR (⊥ secret). push verified by narinfo query from separate job (lesson from `pr0d1r2/nix-hk`: `cachix-action` logs 403 & stays green).
+- cache `pr0d1r2.cachix.org` (D6): push from CI on `main` only; ⊆ Linux `codebuff` & `codebuff-baseline` closures; ⊥ darwin; ⊥ fork PR (⊥ secret). push verified by narinfo query from separate job (lesson from `pr0d1r2/nix-hk`: `cachix-action` logs 403 & stays green). RISK: upstream deps in pushed closure ⊥ verified; first main push checks V5.
 - public from start (D7). ⊥ private repo named in committed text; ∀ repo named checked by `gh repo view` → PUBLIC before first push (`paradigm/V37`).
-- CI = GitHub Actions rendered by actlith from `.actlith`, same `hk.pkl` (`paradigm/V23`, `paradigm/V28`).
+- CI = GitHub Actions, same `hk.pkl` (`paradigm/V23`, `paradigm/V28`); workflows hand-written, reasons in `.actlith` (actlith kinds short, T19); actions SHA-pinned, least privilege.
 - outward acts ! explicit human approval: GitHub repo creation, first push, `CACHIX_AUTH_TOKEN`, bump-PR token, repo settings (private vulnerability reporting, required checks), release, upstream issue.
 - consumer wiring (fleet agent set) = consumer's own PR after release, ⊥ this repo's work (D8).
 - non-goals: Windows, npm launcher, Freebuff & Codebuff's other products, source build, patching Codebuff behaviour.
@@ -59,7 +59,7 @@ self|.|-
 - file: `pkgs/codebuff/sources.json` — version + per-target URL & SRI hash (`pkgs` node §I).
 - cmd: `scripts/bump.sh` (`scripts` node).
 - cachix: substituter `https://pr0d1r2.cachix.org`, key `pr0d1r2.cachix.org-1:NfWjbhgAj41byXhCKiaE+av3Vnphm1fTezHXEGsiQIM=` (from `nix-hk` `flake.nix` `nixConfig`).
-- CI: `.github/workflows/build.yml`, `upstream.yml` from `.actlith`.
+- CI: `.github/workflows/build.yml` (gate, eval, flake check, cache push & verify), `upstream.yml` (daily `bump.sh --check`).
 - env: `CACHIX_AUTH_TOKEN` (CI secret, per-cache WRITE token).
 
 ## §R RESEARCH
@@ -107,13 +107,14 @@ T8|~|waves (`sherd wave` sees ⊥ edges: it reads Rust imports only; order from 
 T9|~|measure: darwin exec of untouched binary on both archs (invalid signature, R4); kernel refusal → gap question to owner, ⊥ re-sign. arm64 runs (R16); x86_64 pending (owner Intel Mac)|V3
 T10|.|measure: Linux `autoPatchelfHook` keeps Bun payload: `codebuff --version` on x86_64-linux & aarch64-linux after patch|V3
 T11|.|measure: writes outside `$HOME/.config/manicode` on fresh `HOME`; record in §R; frozen check covers them|V3
-T12|.|CI via actlith: `build.yml` (build & check, cache & verify Linux), `upstream.yml` (daily bump); `CACHIX_AUTH_TOKEN` w/ approval|V5,V7
+T12|~|CI written & linted 2026-10-24; ⊥ run until T13, `CACHIX_AUTH_TOKEN`, required checks (w/ approval)|V5,V7
 T13|.|GitHub repo `pr0d1r2/nix-codebuff` PUBLIC, first push, w/ approval; `gh repo view` ∀ named repo first. prompt names `nix-orca`, ⊥ resolvable 2026-10-24; owner: both repos go public same weekend ∴ ! PUBLIC before this repo's first push|V6,V7
 T14|.|bump PR author: token source for `upstream.yml` to open PR (owner decision); until then workflow fails red on newer release, ⊥ PR|V7
 T15|.|owner review of agent decisions: baseline as 2nd package, `meta.license = asl20`, `shipLogs` default upstream|-
 T16|.|upstream issues w/ approval: invalid darwin signatures (R4); telemetry w/o opt-out (R10)|V7
 T17|.|pklith issues w/ approval: `pklith confirm` passes w/ empty `pre-commit` hook (reads `check` only; `paradigm/V22` wants ∀ hook); tool probe reads `[ ! -f` as tool `-f`|V7
 T18|.|this repo's own licence (owner decision before first push; ⊥ LICENSE file yet, README says undecided)|V7
+T19|.|actlith issues filed w/ owner approval 2026-10-24: pr0d1r2/actlith#31, #32, #33, #34; when they land, render `build.yml` & `upstream.yml` from `.actlith` rows & drop `## hand-written`|V5
 
 ## §B BUGS
 
