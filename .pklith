@@ -33,10 +33,13 @@ gen-check|gate|-|.pklith, hk.pklith.pkl, nix/pklith.nix|pklith gen --check|pklit
 # Every tracked file has a type, no row is stale, every claim reaches its
 # files, and the mirror rules hold.
 pklith-check|gate|-|-|pklith check|-|-|a tracked file type has no row in .pklith, a row matches nothing, a claimed check never reaches its files, or a mirror rule fails
+# core.worktree in the shared .git/config would point every worktree at
+# one checkout; `sherd wave` (root T8) runs parallel worktrees (paradigm/V15).
+no-core-worktree|gate|git|-|test -z "$(git config --local --get core.worktree)"|-|-|core.worktree is set in the shared .git/config, so every worktree acts on one checkout (paradigm/V15)
 
 ## types
 type|checks|min|exempt
-*|name-guard, trailing-whitespace, final-newline, line-endings, no-bom, no-merge-conflict, no-case-conflict, no-broken-symlinks, no-private-key, ripsecrets, typos, editorconfig-checker, no-local-paths|-|-
+*|name-guard, no-core-worktree, trailing-whitespace, final-newline, line-endings, no-bom, no-merge-conflict, no-case-conflict, no-broken-symlinks, no-private-key, ripsecrets, typos, editorconfig-checker, no-local-paths|-|-
 bats|bats-parse, shellcheck, shfmt, bats-unit|-|-
 editorconfig|-|-|written by pklith (seed or gen)
 gitattributes|-|-|written by pklith (seed or gen)
