@@ -21,11 +21,14 @@ lock-graph|supply|jq|**/flake.lock, gate/lock-graph.sh, gate/lock-graph.jq|bash 
 name-guard|gate|gnugrep|**/*|bash gate/name-guard.sh {{files}}|-|-|a private name is staged (root V6); the hit names the denylist entry, never the name
 # A hash on main is a real literal, never a placeholder (gate T3, root V2).
 no-fakehash|supply|gnugrep|**/*.nix, **/sources.json|bash gate/no-fakehash.sh {{files}}|-|-|a placeholder hash (lib.fakeHash, all-A SRI) is staged; hashes on main are real literals (root V2)
+# The whole bats suite at push, so a RED commit can land (`docs/SHELL.md`).
+# pklith main ships this row; v0.1.0, pinned here, does not.
+bats-unit|coverage|bats|-|bats --recursive tests|-|-|a bats test under tests/ failed, or there is no tests/ directory
 
 ## types
 type|checks|min|exempt
 *|name-guard, trailing-whitespace, final-newline, line-endings, no-bom, no-merge-conflict, no-case-conflict, no-broken-symlinks, no-private-key, ripsecrets, typos, editorconfig-checker, no-local-paths|-|-
-bats|bats-parse|-|-
+bats|bats-parse, bats-unit|-|-
 editorconfig|-|-|written by pklith (seed or gen)
 gitattributes|-|-|written by pklith (seed or gen)
 md|markdownlint|-|-
@@ -43,3 +46,13 @@ lock|lock-graph|-|-
 markdownlintignore|-|-|ignore patterns, no linter reads them
 path:.markdownlint.yaml|-|-|markdownlint configuration; yamllint arrives with the workflows (root T12)
 jq|-|-|jq program run by its shell script; that script's bats test runs it
+
+## rules
+id|kind|select|target|except
+# Mirrored tests both ways (`docs/SHELL.md`): every gate and scripts
+# script has its bats file, and no bats file outlives its script. TDD
+# order waits for a pklith tag with the `tdd-order` kind (v0.1.0 has none).
+gate-test|exists|gate/*.sh|tests/unit/gate/{stem}.bats|-
+gate-orphan|orphan|tests/unit/gate/*.bats|gate/{stem}.sh|-
+scripts-test|exists|scripts/**/*.sh|tests/unit/{path\|chop:.sh}.bats|-
+scripts-orphan|orphan|tests/unit/scripts/**/*.bats|{path\|strip:tests/unit/\|chop:.bats}.sh|-
