@@ -9,3 +9,7 @@ LINEAGE: `SPEC-PROMPT.md` (HISTORICAL after this run). where it & this spec diff
 ## §D DESCRIPTION
 
 nix flake + bash scripts. packaging only: fetch upstream release asset by hash, install untouched (darwin) | interpreter-patched (Linux), wrap, check, bump, cache. ⊥ source build: upstream ships Bun single executable per platform. ⊥ npm launcher: it is the thing that downloads & updates. consumer surface: `packages.<sys>.codebuff`, `default`, `packages.x86_64-linux.codebuff-baseline`, `overlays.default`. shaped like `pr0d1r2/nix-hk`. fleet member, full paradigm conformance.
+
+## §F FEDERATION
+
+dir|owns|⊥owns|tokens
