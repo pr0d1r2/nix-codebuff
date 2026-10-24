@@ -41,7 +41,7 @@ self|.|-
 - `x86_64-linux` baseline (non-AVX2) build = 2nd package `codebuff-baseline`; default `codebuff` = AVX2 build, as upstream launcher picks on AVX2 CPU. launcher's auto-fallback ⊥ reproduced (pure eval ⊥ read `/proc/cpuinfo`); README says when to pick baseline. agent decision 2026-10-24 (prompt delegated), owner review T15.
 - telemetry: PostHog key & host baked as literals, env `prod` baked (R10) ∴ ⊥ off switch exists; ⊥ patch (D3 & Bun payload). log shipping has switch `CODEBUFF_SHIP_LOGS=false`; package arg `shipLogs ? true`: default = upstream behaviour, logs ship; turning them off is the opt-in (`shipLogs = false`), fleet precedent. README states both. agent decision 2026-10-24, owner review T15.
 - `meta.license = lib.licenses.asl20`: binary compiled from `CodebuffAI/codebuff` `cli/` (Apache-2.0; `cli/package.json` ⊥ own licence); release repo MIT covers its files, npm launcher MIT ⊥ shipped (R12). `sourceProvenance = binaryNativeCode`. agent decision 2026-10-24 (prompt delegated), owner review T15.
-- cache `pr0d1r2.cachix.org` (D6): push from CI on `main` only; ⊆ Linux `codebuff` & `codebuff-baseline` closures; ⊥ darwin; ⊥ fork PR (⊥ secret). push verified by narinfo query from separate job (lesson from `pr0d1r2/nix-hk`: `cachix-action` logs 403 & stays green). RISK: upstream deps in pushed closure ⊥ verified; first main push checks V5.
+- cache `pr0d1r2.cachix.org` (D6): push from CI on `main` only; ⊆ Linux `codebuff` & `codebuff-baseline` closures; ⊥ darwin; ⊥ fork PR (⊥ secret). push verified by narinfo query from separate job (lesson from `pr0d1r2/nix-hk`: `cachix-action` logs 403 & stays green). cachix push of `codebuff` out path: "Pushing 1 paths (9 are already present)" (R18) ∴ closure deps ⊥ pushed.
 - public from start (D7). ⊥ private repo named in committed text; ∀ repo named checked by `gh repo view` → PUBLIC before first push (`paradigm/V37`).
 - CI = GitHub Actions, same `hk.pkl` (`paradigm/V23`, `paradigm/V28`); workflows hand-written, reasons in `.actlith` (actlith kinds short, T19); actions SHA-pinned, least privilege.
 - outward acts ! explicit human approval: GitHub repo creation, first push, `CACHIX_AUTH_TOKEN`, bump-PR token, repo settings (private vulnerability reporting, required checks), release, upstream issue.
@@ -82,6 +82,7 @@ R14|launcher-only package fails offline|nixpkgs `codebuff` ships `index.js` `lau
 R15|Bun's own CLI|runtime carries `BUN_BE_BUN` (exe acts as `bun`, incl `bun upgrade`, `bun install`) ∴ wrapper unsets it|bundle scan
 R16|first build 2026-10-24|aarch64-darwin: untouched binary (sha256 `486d0ad8…` ≡ tarball member, codesign unchanged) runs in nix build; `--version` → `1.0.688` despite R4 invalid signature. `--version` w/ read-only `HOME=/var/empty` → EPERM on `mkdir '/var/empty/.config'`|wave 2 build log, `shasum`, `codesign -dv`
 R17|patchelf on Linux member 2026-10-24|real linux-x64 member after `patchelf --set-interpreter --set-rpath`: NEEDED set & `.bun` section bytes unchanged (`scripts/checks/untouched.sh` exit 0); `--add-needed` → NEEDED finding. GNU objcopy built for darwin ⊥ reads ELF ("file format not recognized") ∴ ELF branch runs on Linux \| `llvm-objcopy`|wave 4 by hand, in nix build
+R18|first CI run 2026-10-24|run 40085047052 on `main` `b6f0372`: x86_64-linux & aarch64-linux `nix flake check` green (autoPatchelfHook under `stdenvNoCC`: interpreter set, 0 deps unsatisfied; versionCheckHook `1.0.688`; frozen, untouched ELF, layout, tree-sitter pass); aarch64-darwin green; cachix: 1 path to push, 9 present, refused w/o token|`gh run view 40085047052`
 
 ## §V INVARIANTS
 
@@ -105,17 +106,17 @@ T6|x|dev shell (`dev`); ask human to reload|V1
 T7|x|guardrails via `.pklith`, 1 check per commit, planted violation each; 33 steps green on `hk check --all` 2026-10-24; human reloaded 2026-10-24|V1,V2,V6
 T8|~|waves (`sherd wave` sees ⊥ edges: it reads Rust imports only; order from spec deps): wave 1 `scripts` bump ✓ → wave 2 `pkgs` `sources.json` via bump + package aarch64-darwin ✓ → wave 3 root `flake.nix` ✓ → wave 4 check scripts ✓ → wave 5 `nix` checks ✓ → Linux via builder \| CI → CI → `docs`|V2,V3,V4
 T9|~|measure: darwin exec of untouched binary on both archs (invalid signature, R4); kernel refusal → gap question to owner, ⊥ re-sign. arm64 runs (R16); x86_64 pending (owner Intel Mac)|V3
-T10|.|measure: Linux `autoPatchelfHook` keeps Bun payload: `codebuff --version` on x86_64-linux & aarch64-linux after patch|V3
+T10|x|measure: Linux `autoPatchelfHook` keeps Bun payload: `codebuff --version` on x86_64-linux & aarch64-linux after patch. CI run 40085047052 2026-10-24: interpreter set, 0 deps unsatisfied, `--version` `1.0.688`, ∀ checks incl ELF `untouched` green on both (R18)|V3
 T11|.|measure: writes outside `$HOME/.config/manicode` on fresh `HOME`; record in §R; frozen check covers them|V3
-T12|~|CI written & linted 2026-10-24; ⊥ run until T13, `CACHIX_AUTH_TOKEN`, required checks (w/ approval)|V5,V7
-T13|.|GitHub repo `pr0d1r2/nix-codebuff` PUBLIC, first push, w/ approval; `gh repo view` ∀ named repo first. prompt names `nix-orca`, ⊥ resolvable 2026-10-24; owner: both repos go public same weekend ∴ ! PUBLIC before this repo's first push|V6,V7
+T12|~|CI ran 2026-10-24 (40085047052): gate ×3, eval, flake check ×3 green; Linux cachix push red: `CACHIX_AUTH_TOKEN` unset (owner adds; push runs on `main` only, PRs unaffected)|V5,V7
+T13|x|DONE 2026-10-24: repo PUBLIC, `main` pushed; nix-orca ⊥ yet public, owner OK. GitHub repo `pr0d1r2/nix-codebuff` PUBLIC, first push, w/ approval; `gh repo view` ∀ named repo first. prompt names `nix-orca`, ⊥ resolvable 2026-10-24; owner: both repos go public same weekend ∴ ! PUBLIC before this repo's first push|V6,V7
 T14|.|bump PR author: token source for `upstream.yml` to open PR (owner decision); until then workflow fails red on newer release, ⊥ PR|V7
 T15|x|ACCEPTED by owner 2026-10-24: owner review of agent decisions: baseline as 2nd package, `meta.license = asl20`, `shipLogs` default upstream|-
 T16|.|upstream issues w/ approval: invalid darwin signatures (R4); telemetry w/o opt-out (R10)|V7
 T17|.|pklith issues w/ approval: `pklith confirm` passes w/ empty `pre-commit` hook (reads `check` only; `paradigm/V22` wants ∀ hook); tool probe reads `[ ! -f` as tool `-f`|V7
 T18|x|this repo's own licence: MIT, owner 2026-10-24; `LICENSE`|V7
 T19|.|actlith issues filed w/ owner approval 2026-10-24: pr0d1r2/actlith#31, #32, #33, #34; when they land, render `build.yml` & `upstream.yml` from `.actlith` rows & drop `## hand-written`|V5
-T20|.|branch protection on `main` (owner 2026-10-24): PR required, admins included (`enforce_admins`), ⊥ force push, ⊥ delete; required checks once CI ran (T12); local `no-commit-to-branch` step (`paradigm/V23`)|V7
+T20|~|SET 2026-10-24: PR required (0 approvals), `enforce_admins`, ⊥ force push, ⊥ delete, 7 required checks, squash merge off; local `no-commit-to-branch` pending. branch protection on `main` (owner 2026-10-24): PR required, admins included (`enforce_admins`), ⊥ force push, ⊥ delete; required checks once CI ran (T12); local `no-commit-to-branch` step (`paradigm/V23`)|V7
 
 ## §B BUGS
 
