@@ -60,7 +60,7 @@ to it. These are the variables it sets or unsets:
 | `CODEBUFF_TREE_SITTER_WASM_PATH` | `$out/libexec/codebuff/tree-sitter.wasm` | intended to point at the packaged parser; see the note below |
 | `CODEBUFF_RG_PATH` | the pinned ripgrep's `rg` (15.1.0 at the 2026-10-24 pin), as a default | code search, which otherwise throws `Ripgrep binary not found`: the tarball ships no `rg` |
 | `BUN_BE_BUN` | unset | the executable acting as the `bun` CLI, `bun upgrade` and `bun install` included |
-| `CODEBUFF_SHIP_LOGS` | `false`, only with `shipLogs = false` | log batches sent upstream (off by default, see [Telemetry](#telemetry)) |
+| `CODEBUFF_SHIP_LOGS` | `false`, only with `shipLogs = false` | log batches sent upstream; unset by default, so logs ship as upstream intends (see [Telemetry](#telemetry)) |
 
 A note on the tree-sitter variable, measured in a nix build on 2026-10-24: the
 binary ignores `CODEBUFF_TREE_SITTER_WASM_PATH`. It loads `tree-sitter.wasm`
