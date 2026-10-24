@@ -20,7 +20,7 @@
   };
 
   outputs =
-    { nixpkgs, ... }:
+    { self, nixpkgs, ... }:
     let
       systems = [
         "aarch64-darwin"
@@ -50,5 +50,20 @@
       overlays.default = final: _prev: {
         codebuff = final.callPackage ./pkgs/codebuff/package.nix { };
       };
+
+      # nix §I: frozen, tree-sitter, untouched, layout, meta, overlay; the
+      # baseline's too on x86_64-linux.
+      checks = forAll (
+        pkgs:
+        let
+          own = self.packages.${pkgs.stdenv.hostPlatform.system};
+        in
+        import ./nix/checks.nix {
+          inherit pkgs;
+          inherit (own) codebuff;
+          codebuff-baseline = own.codebuff-baseline or null;
+          overlay = self.overlays.default;
+        }
+      );
     };
 }
