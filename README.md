@@ -11,7 +11,7 @@ Pinned: Codebuff 1.0.688, the newest stable upstream release as of 2026-10-24.
 
 **Status, as of 2026-10-24: pre-release.** The `aarch64-darwin` package builds,
 and its flake checks build and pass on an Apple Silicon Mac. All four systems
-evaluate. Not done yet: the Linux and `x86_64-darwin` builds, CI, the binary
+evaluate. Not done yet: the Linux and `x86_64-darwin` builds, running CI (the workflows are written), the binary
 cache, and publishing this repository on GitHub. Until then the `github:` URLs
 below do not resolve.
 
@@ -250,7 +250,10 @@ prefetch-file` hash equals the sha256 digest GitHub reports. Only then does it
 rewrite `sources.json`, the one file that holds hashes; it commits nothing.
 Exit codes: 0 bumped (the version on stdout), 3 up to date, 1 refused, 2 usage.
 
-A daily workflow that runs the bump is planned with CI.
+A daily workflow, `.github/workflows/upstream.yml`, runs `scripts/bump.sh --check`
+and fails when a newer release is out; until it can open pull requests, the
+bump is run by hand. It is written but has not run yet: the repository is not
+on GitHub (2026-10-24).
 
 ## Licence
 

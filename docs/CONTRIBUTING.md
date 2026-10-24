@@ -95,8 +95,9 @@ Run the suite with `bats --recursive tests`.
 3. Build and check: `nix build .#codebuff` and `nix flake check`.
 4. Commit `sources.json` on its own.
 
-A daily workflow that runs the bump is planned with CI; until it can open
-pull requests, it reports a newer release by failing.
+A daily workflow, `.github/workflows/upstream.yml`, runs `scripts/bump.sh --check`.
+Until it can open pull requests (root T14), it reports a newer release by
+failing, and the bump is run by hand.
 
 ## Reporting problems
 
