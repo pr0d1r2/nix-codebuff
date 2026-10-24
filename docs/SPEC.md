@@ -33,8 +33,8 @@ V2: README states telemetry ⊥ fully switchable.
 ## §T TASKS
 
 id|status|task|cites
-T1|.|README|V1,V2
-T2|.|SECURITY, CONTRIBUTING, LLM-DISCLAIMER skeleton|-
+T1|x|README|V1,V2
+T2|x|SECURITY, CONTRIBUTING, LLM-DISCLAIMER in full; "planned" CI & bump wording ! follow root T12 when CI lands|-
 
 ## §B BUGS
 

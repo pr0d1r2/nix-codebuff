@@ -39,12 +39,12 @@ self|.|-
 - Linux binary: only ELF interpreter (& rpath if needed) patched (D3). ⊥ strip: Bun payload in `.bun` section (R5).
 - frozen (D4): binary has ⊥ update code (R7); download & self-update live in npm launcher only (R6), ⊥ packaged. run-time fetch paths closed in wrapper: tree-sitter wasm (R9), ripgrep (R8), Bun's own CLI (R15).
 - `x86_64-linux` baseline (non-AVX2) build = 2nd package `codebuff-baseline`; default `codebuff` = AVX2 build, as upstream launcher picks on AVX2 CPU. launcher's auto-fallback ⊥ reproduced (pure eval ⊥ read `/proc/cpuinfo`); README says when to pick baseline. agent decision 2026-10-24 (prompt delegated), owner review T15.
-- telemetry: PostHog key & host baked as literals, env `prod` baked (R10) ∴ ⊥ off switch exists; ⊥ patch (D3 & Bun payload). log shipping has switch `CODEBUFF_SHIP_LOGS=false`; package arg `shipLogs ? true`, default = upstream behaviour (fleet precedent: off switch opt-in). README states both. agent decision 2026-10-24, owner review T15.
+- telemetry: PostHog key & host baked as literals, env `prod` baked (R10) ∴ ⊥ off switch exists; ⊥ patch (D3 & Bun payload). log shipping has switch `CODEBUFF_SHIP_LOGS=false`; package arg `shipLogs ? true`: default = upstream behaviour, logs ship; turning them off is the opt-in (`shipLogs = false`), fleet precedent. README states both. agent decision 2026-10-24, owner review T15.
 - `meta.license = lib.licenses.asl20`: binary compiled from `CodebuffAI/codebuff` `cli/` (Apache-2.0; `cli/package.json` ⊥ own licence); release repo MIT covers its files, npm launcher MIT ⊥ shipped (R12). `sourceProvenance = binaryNativeCode`. agent decision 2026-10-24 (prompt delegated), owner review T15.
 - cache `pr0d1r2.cachix.org` (D6): push from CI on `main` only; ⊆ Linux `codebuff` & `codebuff-baseline` closures; ⊥ darwin; ⊥ fork PR (⊥ secret). push verified by narinfo query from separate job (lesson from `pr0d1r2/nix-hk`: `cachix-action` logs 403 & stays green).
 - public from start (D7). ⊥ private repo named in committed text; ∀ repo named checked by `gh repo view` → PUBLIC before first push (`paradigm/V37`).
 - CI = GitHub Actions rendered by actlith from `.actlith`, same `hk.pkl` (`paradigm/V23`, `paradigm/V28`).
-- outward acts ! explicit human approval: GitHub repo creation, first push, `CACHIX_AUTH_TOKEN`, bump-PR token, release, upstream issue.
+- outward acts ! explicit human approval: GitHub repo creation, first push, `CACHIX_AUTH_TOKEN`, bump-PR token, repo settings (private vulnerability reporting, required checks), release, upstream issue.
 - consumer wiring (fleet agent set) = consumer's own PR after release, ⊥ this repo's work (D8).
 - non-goals: Windows, npm launcher, Freebuff & Codebuff's other products, source build, patching Codebuff behaviour.
 
@@ -113,6 +113,7 @@ T14|.|bump PR author: token source for `upstream.yml` to open PR (owner decision
 T15|.|owner review of agent decisions: baseline as 2nd package, `meta.license = asl20`, `shipLogs` default upstream|-
 T16|.|upstream issues w/ approval: invalid darwin signatures (R4); telemetry w/o opt-out (R10)|V7
 T17|.|pklith issues w/ approval: `pklith confirm` passes w/ empty `pre-commit` hook (reads `check` only; `paradigm/V22` wants ∀ hook); tool probe reads `[ ! -f` as tool `-f`|V7
+T18|.|this repo's own licence (owner decision before first push; ⊥ LICENSE file yet, README says undecided)|V7
 
 ## §B BUGS
 
