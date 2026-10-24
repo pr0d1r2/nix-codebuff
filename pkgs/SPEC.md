@@ -20,7 +20,7 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 - target map: `aarch64-darwin` → `darwin-arm64`, `x86_64-darwin` → `darwin-x64`, `aarch64-linux` → `linux-arm64`, `x86_64-linux` → `linux-x64`; `baseline = true` on `x86_64-linux` → `linux-x64-baseline`, other sys → eval error (`.` §C).
 - `stdenvNoCC.mkDerivation`; `fetchurl` per target from `sources.json` (`.:V2`). unpack: tarball holds `codebuff` & `tree-sitter.wasm` at top (`.` R2).
 - layout: `$out/libexec/codebuff/codebuff`, `$out/libexec/codebuff/tree-sitter.wasm`; `$out/bin/codebuff` = `makeWrapper` of libexec binary; `$out/bin/cb` → symlink to `$out/bin/codebuff`. wrapper exec keeps `process.execPath` = libexec binary ∴ sibling wasm lookup also holds.
-- wrapper: `--set CODEBUFF_TREE_SITTER_WASM_PATH $out/libexec/codebuff/tree-sitter.wasm` (`.` R9); `--set-default CODEBUFF_RG_PATH ${ripgrep}/bin/rg` (`.` R8); `--unset BUN_BE_BUN` (`.` R15); `shipLogs = false` → `--set CODEBUFF_SHIP_LOGS false` (`.` R10).
+- wrapper: `--set CODEBUFF_TREE_SITTER_WASM_PATH $out/libexec/codebuff/tree-sitter.wasm` (`.` R9); `--set-default CODEBUFF_RG_PATH ${ripgrep}/bin/rg` (`.` R8); `--unset BUN_BE_BUN` (`.` R15); `shipLogs = false` → `--set CODEBUFF_SHIP_LOGS false` (`.` R10). wasm path: the binary ignores the env var (`.` R9); the sibling file is what closes the fetch.
 - darwin: `dontStrip`, ⊥ `install_name_tool`, ⊥ `codesign`; binary copied w/ `install -m755` only (`.` §C, D3).
 - Linux: `autoPatchelfHook`, buildInputs = `lib.getLib glibc` only (bare `glibc` resolves to `glibc-dev`; `.` R5); `dontStrip` (`.bun` section). `dontPatchELF` ∀ sys: fixup ⊥ shrinks rpath beyond autoPatchelfHook (`pkgs:V2`). RISK: `stdenvNoCC` has ⊥ bintools, so where autoPatchelfHook takes the interpreter from ⊥ proven until T3 builds on Linux.
 - `meta`: `license = lib.licenses.asl20`, `sourceProvenance = [ lib.sourceTypes.binaryNativeCode ]`, `mainProgram = "codebuff"`, `platforms` = 4 fleet sys (`codebuff-baseline`: `x86_64-linux`), `homepage = "https://www.codebuff.com"`.
@@ -39,7 +39,7 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 
 V1: darwin `libexec/codebuff/codebuff` sha256 ≡ tarball member sha256 (D3).
 V2: Linux: patched binary's NEEDED set ≡ unpatched; `.bun` section bytes ≡ unpatched; only `PT_INTERP` & rpath differ (D3).
-V3: wrapper sets `CODEBUFF_TREE_SITTER_WASM_PATH` to existing store file & `CODEBUFF_RG_PATH` default to existing store `rg`; unsets `BUN_BE_BUN` (`.:V3`).
+V3: wrapper sets `CODEBUFF_TREE_SITTER_WASM_PATH` to existing file (≡ `libexec/codebuff/tree-sitter.wasm`) & `CODEBUFF_RG_PATH` default to existing store `rg`; unsets `BUN_BE_BUN` (`.:V3`).
 V4: `bin/` ≡ {`codebuff`, `cb`}; `cb` resolves to `codebuff`.
 V5: `meta.license` ≡ `asl20`, `sourceProvenance` ≡ [`binaryNativeCode`], `mainProgram` ≡ `codebuff`.
 V6: `sources.json` holds ∀ 5 targets; package eval reads hash only from it, ⊥ hash literal in `.nix`.

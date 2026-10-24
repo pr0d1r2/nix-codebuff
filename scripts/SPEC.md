@@ -42,7 +42,7 @@ V5: ∀ script has mirrored bats & passes w/ stubs only; orphan bats fails.
 
 id|status|task|cites
 T1|x|`bump.sh` + fixtures (release list w/ freebuff & beta tags, missing asset, digest mismatch)|V1,V2,V3,V4
-T2|.|`checks/*.sh` per `nix` node|V5
+T2|x|`checks/*.sh` per `nix` node: frozen, tree-sitter, untouched, layout|V5
 T3|.|`upstream.yml` via `.actlith`|V1
 T4|x|`dev/shell-hook.sh`, RED bats first|V5
 

@@ -21,6 +21,7 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 - run in build sandbox: ⊥ network on Linux. darwin sandbox may allow network ∴ checks also point `HTTP_PROXY` `HTTPS_PROXY` `ALL_PROXY` at loopback listener & count connections.
 - fresh `HOME=$TMPDIR/home` per check.
 - checks run ∀ 4 sys where built; `codebuff-baseline` checks on `x86_64-linux`.
+- check inputs (wave 4): `frozen` socat coreutils findutils gnused gnugrep; `tree-sitter` coreutils gnused gnugrep; `untouched` gnutar gzip diffutils coreutils, + binutils on Linux (ELF branch ⊥ on darwin: `.` R17); `layout` findutils gnused gnugrep. `overlay` & meta (`pkgs:V5`) = nix assertions, ⊥ script.
 
 ## §I INTERFACES
 
@@ -33,7 +34,7 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 ## §V INVARIANTS
 
 V1: `frozen` fails on fixture binary that opens a socket | writes a file named `codebuff` under `$HOME` (planted violation) (`.:V3`).
-V2: `tree-sitter` fails when wasm path unset (planted: wrapper w/o `--set`) (`.:V3`).
+V2: `tree-sitter` fails when wasm path unset (planted: wrapper w/o `--set`; caught by reading wrapper text, since binary ignores the var: `.` R9) (`.:V3`).
 V3: ∀ check script has mirrored bats (`scripts` node owns script & bats).
 
 ## §T TASKS
