@@ -12,6 +12,12 @@ format 1
 #   so the two disagree on every row. sherd-budget gates it, as in sibling
 #   gates (paradigm T14 tracks one meaning for the file).
 
+## checks
+id|category|nix|glob|check|fix|env|msg
+# Root V1 on every flake lock: the dev lock, and the root lock (once the
+# root flake exists) with its one allowed input (gate T1, gate:V1).
+lock-graph|supply|jq|**/flake.lock, gate/lock-graph.sh, gate/lock-graph.jq|bash gate/lock-graph.sh dev/flake.lock && if test -e flake.lock; then bash gate/lock-graph.sh flake.lock nixpkgs nixpkgs-lock; fi|-|-|a flake lock holds more or fewer than one nixpkgs, an input locks its own, or the root flake has an input besides nixpkgs-lock (root V1)
+
 ## types
 type|checks|min|exempt
 *|trailing-whitespace, final-newline, line-endings, no-bom, no-merge-conflict, no-case-conflict, no-broken-symlinks, no-private-key, ripsecrets, typos, editorconfig-checker, no-local-paths|-|-
@@ -29,7 +35,7 @@ pre-commit|-|-|written by pklith (seed or gen)
 pre-push|-|-|written by pklith (seed or gen)
 sh|shellcheck, shfmt|-|-
 gitignore|-|-|ignore patterns, no linter reads them
-lock|-|-|flake lock; gate T1's lock-graph guard takes this row
+lock|lock-graph|-|-
 markdownlintignore|-|-|ignore patterns, no linter reads them
 path:.markdownlint.yaml|-|-|markdownlint configuration; yamllint arrives with the workflows (root T12)
 jq|-|-|jq program run by its shell script; that script's bats test runs it

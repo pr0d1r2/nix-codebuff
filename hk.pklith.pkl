@@ -107,6 +107,10 @@ steps: Mapping<String, Config.Step> = new {
     glob = List("**/SPEC.md", ".context-limits")
     check = "command -v sherd >/dev/null 2>&1 || { echo 'sherd-budget: sherd is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; sherd budget || { echo 'sherd-budget: a spec chain is over its ceiling' >&2; exit 1; }"
   }
+  ["lock-graph"] {
+    glob = List("**/flake.lock", "gate/lock-graph.sh", "gate/lock-graph.jq")
+    check = "command -v bash >/dev/null 2>&1 || { echo 'lock-graph: bash is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; bash gate/lock-graph.sh dev/flake.lock && if test -e flake.lock; then bash gate/lock-graph.sh flake.lock nixpkgs nixpkgs-lock; fi || { echo 'lock-graph: a flake lock holds more or fewer than one nixpkgs, an input locks its own, or the root flake has an input besides nixpkgs-lock (root V1)' >&2; exit 1; }"
+  }
 }
 
 push: Mapping<String, Config.Step> = new {
