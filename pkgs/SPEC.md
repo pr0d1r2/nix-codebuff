@@ -21,11 +21,12 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 - `stdenvNoCC.mkDerivation`; `fetchurl` per target from `sources.json` (`.:V2`). unpack: tarball holds `codebuff` & `tree-sitter.wasm` at top (`.` R2).
 - layout: `$out/libexec/codebuff/codebuff`, `$out/libexec/codebuff/tree-sitter.wasm`; `$out/bin/codebuff` = `makeWrapper` of libexec binary; `$out/bin/cb` → symlink to `$out/bin/codebuff`. wrapper exec keeps `process.execPath` = libexec binary ∴ sibling wasm lookup also holds.
 - wrapper: `--set CODEBUFF_TREE_SITTER_WASM_PATH $out/libexec/codebuff/tree-sitter.wasm` (`.` R9); `--set-default CODEBUFF_RG_PATH ${ripgrep}/bin/rg` (`.` R8); `--unset BUN_BE_BUN` (`.` R15); `shipLogs = false` → `--set CODEBUFF_SHIP_LOGS false` (`.` R10).
-- darwin: `dontStrip`, `dontPatchELF`, ⊥ `install_name_tool`, ⊥ `codesign`; binary copied w/ `install -m755` only (`.` §C, D3).
-- Linux: `autoPatchelfHook`, buildInputs = glibc only (`.` R5); `dontStrip` (`.bun` section).
+- darwin: `dontStrip`, ⊥ `install_name_tool`, ⊥ `codesign`; binary copied w/ `install -m755` only (`.` §C, D3).
+- Linux: `autoPatchelfHook`, buildInputs = `lib.getLib glibc` only (bare `glibc` resolves to `glibc-dev`; `.` R5); `dontStrip` (`.bun` section). `dontPatchELF` ∀ sys: fixup ⊥ shrinks rpath beyond autoPatchelfHook (`pkgs:V2`). RISK: `stdenvNoCC` has ⊥ bintools, so where autoPatchelfHook takes the interpreter from ⊥ proven until T3 builds on Linux.
 - `meta`: `license = lib.licenses.asl20`, `sourceProvenance = [ lib.sourceTypes.binaryNativeCode ]`, `mainProgram = "codebuff"`, `platforms` = 4 fleet sys (`codebuff-baseline`: `x86_64-linux`), `homepage = "https://www.codebuff.com"`.
 - `passthru.sources` = parsed `sources.json` (checks & bump read it).
-- `versionCheckHook` w/ `versionCheckProgramArg = "--version"` ∴ wrong binary = build fail.
+- `versionCheckHook` w/ `versionCheckProgramArg = "--version"` ∴ wrong binary = build fail. `--version` creates `~/.config` first (`.` R16) ∴ install check runs w/ `HOME=$(mktemp -d)` & `versionCheckKeepEnvironment = [ "HOME" ]`.
+- `pname = "codebuff"` ∀ variants; `codebuff-baseline` = flake attr name only (`nix` / root flake).
 
 ## §I INTERFACES
 
@@ -46,10 +47,10 @@ V6: `sources.json` holds ∀ 5 targets; package eval reads hash only from it, �
 ## §T TASKS
 
 id|status|task|cites
-T1|.|`sources.json` for `1.0.688` written by bump (`scripts` node), ⊥ by hand|V6
-T2|.|`package.nix` darwin path: untouched copy, wrapper, `cb`, meta|V1,V3,V4,V5
-T3|.|Linux path: `autoPatchelfHook`, `dontStrip`; `baseline` arg; `codebuff-baseline` attr|V2,V3
-T4|.|`shipLogs` arg|V3
+T1|x|`sources.json` for `1.0.688` written by bump (`scripts` node), ⊥ by hand|V6
+T2|x|`package.nix` darwin path: untouched copy, wrapper, `cb`, meta|V1,V3,V4,V5
+T3|~|Linux path: `autoPatchelfHook`, `dontStrip`; `baseline` arg; `codebuff-baseline` attr. written & evaluated ∀ Linux 2026-10-24; build & V2 measurement pending (root T10)|V2,V3
+T4|x|`shipLogs` arg|V3
 
 ## §B BUGS
 

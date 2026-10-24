@@ -75,11 +75,12 @@ R7|binary update code|bundle has 0 `/api/releases`, 0 `registry.npmjs.org/codebu
 R8|ripgrep|code search resolves `CODEBUFF_RG_PATH` first, else `vendor/ripgrep/<target>/rg` beside script (`/$bunfs`, absent), else `./node_modules/@codebuff/sdk/dist/vendor/ripgrep/…`, else throws `Ripgrep binary not found`. ⊥ download. tarball ships ⊥ rg ∴ wrapper sets `CODEBUFF_RG_PATH`. pin ripgrep `15.1.0`|bundle function resolving rg path
 R9|tree-sitter wasm|`tree-sitter.wasm` looked up at `CODEBUFF_TREE_SITTER_WASM_PATH`, scriptDir, `dirname(process.execPath)`; fallback URLs `https://unpkg.com/web-tree-sitter@0.25.10/tree-sitter.wasm` & `cdn.jsdelivr.net` = run-time download ∴ wrapper sets path. flag `--smoke-tree-sitter` prints resolution|bundle near `CODEBUFF_TREE_SITTER_WASM_PATH`
 R10|telemetry|`posthog-node`; key `phc_…` & host `https://us.i.posthog.com` baked in env literal, schema-validated, ⊥ read from `process.env`; `NEXT_PUBLIC_CB_ENVIRONMENT` baked `prod`; ⊥ `DO_NOT_TRACK` in Codebuff code (1 hit = Bun runtime). `CODEBUFF_SHIP_LOGS` `"false"` → log batches ⊥ sent. `CODEBUFF_FULL_TELEMETRY*` only widens|bundle near `NEXT_PUBLIC_POSTHOG_API_KEY`, `CODEBUFF_SHIP_LOGS`
-R11|state dir|config `~/.config/manicode` (`-<env>` suffix off prod); ignore files `.gitignore` `.codebuffignore` `.manicodeignore`. other writes ⊥ measured (T11)|bundle near `manicode`
+R11|state dir|config `~/.config/manicode` (`-<env>` suffix off prod); ignore files `.gitignore` `.codebuffignore` `.manicodeignore`. `--version` alone mkdirs `~/.config` (R16). other writes ⊥ measured (T11)|bundle near `manicode`
 R12|licences|`CodebuffAI/codebuff` Apache-2.0 (id 826515105); `cli/package.json` `license: null`; `codebuff-community` LICENSE MIT ("Copyright (c) 2025 Codebuff"); npm `codebuff` MIT; nixpkgs `codebuff` `meta.license` MIT|`gh api repos/…`, `gh api …/contents/LICENSE`
 R13|pin `da6dc0e` 2026-10-24|nixpkgs `26.05.20261021.da6dc0e` via `nixpkgs-lock` `e95fdd0`; `codebuff` 1.0.674 = `buildNpmPackage` of npm launcher (∴ downloads at first run); `ripgrep` 15.1.0|`nix eval github:NixOS/nixpkgs/<pin>#<attr>`
 R14|launcher-only package fails offline|nixpkgs `codebuff` ships `index.js` `launcher.js`; ∀ start → registry check, first start → download into `$HOME` ∴ ⊥ frozen, ⊥ reproducible (prompt Problem)|R6, R13
 R15|Bun's own CLI|runtime carries `BUN_BE_BUN` (exe acts as `bun`, incl `bun upgrade`, `bun install`) ∴ wrapper unsets it|bundle scan
+R16|first build 2026-10-24|aarch64-darwin: untouched binary (sha256 `486d0ad8…` ≡ tarball member, codesign unchanged) runs in nix build; `--version` → `1.0.688` despite R4 invalid signature. `--version` w/ read-only `HOME=/var/empty` → EPERM on `mkdir '/var/empty/.config'`|wave 2 build log, `shasum`, `codesign -dv`
 
 ## §V INVARIANTS
 
@@ -102,7 +103,7 @@ T5|x|`.gitignore`: `.claude/`, `.direnv/`, `result*`, `.private/`|V6
 T6|x|dev shell (`dev`); ask human to reload|V1
 T7|x|guardrails via `.pklith`, 1 check per commit, planted violation each; 33 steps green on `hk check --all` 2026-10-24; human reloaded 2026-10-24|V1,V2,V6
 T8|~|waves (`sherd wave` sees ⊥ edges: it reads Rust imports only; order from spec deps): wave 1 `scripts` bump ✓ → `pkgs` `sources.json` via bump + package aarch64-darwin → `nix` checks → Linux via builder \| CI → CI → `docs`|V2,V3,V4
-T9|.|measure: darwin exec of untouched binary on both archs (invalid signature, R4); kernel refusal → gap question to owner, ⊥ re-sign|V3
+T9|~|measure: darwin exec of untouched binary on both archs (invalid signature, R4); kernel refusal → gap question to owner, ⊥ re-sign. arm64 runs (R16); x86_64 pending (owner Intel Mac)|V3
 T10|.|measure: Linux `autoPatchelfHook` keeps Bun payload: `codebuff --version` on x86_64-linux & aarch64-linux after patch|V3
 T11|.|measure: writes outside `$HOME/.config/manicode` on fresh `HOME`; record in §R; frozen check covers them|V3
 T12|.|CI via actlith: `build.yml` (build & check, cache & verify Linux), `upstream.yml` (daily bump); `CACHIX_AUTH_TOKEN` w/ approval|V5,V7
