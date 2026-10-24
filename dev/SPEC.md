@@ -38,7 +38,7 @@ V3: shell entry ⊥ fails; hooks ⊥ installed before `hk.pkl` exists (`paradigm
 ## §T TASKS
 
 id|status|task|cites
-T1|.|`dev/flake.nix` + `.envrc`|V1,V2,V3
+T1|x|`dev/flake.nix` + `.envrc`|V1,V2,V3
 
 ## §B BUGS
 
