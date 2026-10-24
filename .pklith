@@ -3,12 +3,18 @@ format 1
 # Seeded by `pklith seed --init` from the fragments this repository's
 # files switch on (`pklith detect`). It is yours now: pklith never rewrites it.
 #
-# No built-in check reads these types yet, so `pklith check` names them
-# until each gets checks or an exempt reason: gitignore, lock.
+# Edited by hand since (root T7): gitignore is exempt; flake locks are
+# exempt until gate T1's lock-graph guard takes the row.
+#
+# Not laid, with its reason:
+# - itok: `.context-limits` holds sherd's chain ceilings (`paradigm/V12`);
+#   itok reads the same file as per-file ceilings with another tokenizer,
+#   so the two disagree on every row. sherd-budget gates it, as in sibling
+#   gates (paradigm T14 tracks one meaning for the file).
 
 ## types
 type|checks|min|exempt
-*|trailing-whitespace, final-newline, line-endings, no-bom, no-merge-conflict, no-case-conflict, no-broken-symlinks, no-private-key, ripsecrets, typos, editorconfig-checker, no-local-paths, itok|-|-
+*|trailing-whitespace, final-newline, line-endings, no-bom, no-merge-conflict, no-case-conflict, no-broken-symlinks, no-private-key, ripsecrets, typos, editorconfig-checker, no-local-paths|-|-
 bats|bats-parse|-|-
 editorconfig|-|-|written by pklith (seed or gen)
 gitattributes|-|-|written by pklith (seed or gen)
@@ -22,3 +28,5 @@ pkl|-|-|written by pklith (seed or gen)
 pre-commit|-|-|written by pklith (seed or gen)
 pre-push|-|-|written by pklith (seed or gen)
 sh|shellcheck, shfmt|-|-
+gitignore|-|-|ignore patterns, no linter reads them
+lock|-|-|flake lock; gate T1's lock-graph guard takes this row
