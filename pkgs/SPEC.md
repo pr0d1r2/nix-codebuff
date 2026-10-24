@@ -9,6 +9,7 @@
 rel|path|lens
 up|.|-
 self|pkgs|`pkgs/codebuff/package.nix`, `sources.json`: fetch, install, wrap
+sib|nix|`nix/checks.nix`: frozen, offline, untouched, layout, overlay checks
 
 ## §C CONSTRAINTS
 

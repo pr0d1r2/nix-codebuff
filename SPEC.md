@@ -14,6 +14,7 @@ nix flake + bash scripts. packaging only: fetch upstream release asset by hash, 
 
 dir|owns|⊥owns|tokens
 pkgs|`pkgs/codebuff/package.nix`, `sources.json`: fetch, install, wrap|bump (`scripts`), checks (`nix`)|-
+nix|`nix/checks.nix`: frozen, offline, untouched, layout, overlay checks|check script bodies & bats (`scripts`), package (`pkgs`)|-
 
 ## §N NAV
 
