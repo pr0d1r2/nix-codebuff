@@ -90,3 +90,23 @@ V4: overlay adds exactly `codebuff`: `attrNames (overlay {} {})` ≡ [`codebuff`
 V5: ∀ cachix push ⊆ Linux `codebuff` | `codebuff-baseline` closure, `main` only; ⊥ darwin; verified by narinfo 200 from separate job (D6).
 V6: ⊥ private repo named in committed text (`paradigm/V37`, D7).
 V7: ∀ outward act ∈ §C approval list has human approval on record.
+
+## §T TASKS
+
+id|status|task|cites
+T1|.|vendor `FORMAT.md` & `FORMAT-EXTENSIONS.md` from paradigm `fda10ea`|-
+T2|.|spec run: root sections & ∀ node, 1 per commit, trailer `spec-run`|-
+T3|.|freeze `SPEC-PROMPT.md`: line 1 → `HISTORICAL INPUT`, own commit|-
+T4|.|`.context-limits` from `sherd budget` + 12–20%|-
+T5|.|`.gitignore`: `.claude/`, `.direnv/`, `result*`, `.private/`|V6
+T6|.|dev shell (`dev`); ask human to reload|V1
+T7|.|guardrails via `.pklith`, 1 check per commit, planted violation each; ask human to reload|V1,V2,V6
+T8|.|waves via `sherd wave`, order: `pkgs` aarch64-darwin → `nix` checks → Linux via builder \| CI → `scripts` bump → CI → `docs`|V2,V3,V4
+T9|.|measure: darwin exec of untouched binary on both archs (invalid signature, R4); kernel refusal → gap question to owner, ⊥ re-sign|V3
+T10|.|measure: Linux `autoPatchelfHook` keeps Bun payload: `codebuff --version` on x86_64-linux & aarch64-linux after patch|V3
+T11|.|measure: writes outside `$HOME/.config/manicode` on fresh `HOME`; record in §R; frozen check covers them|V3
+T12|.|CI via actlith: `build.yml` (build & check, cache & verify Linux), `upstream.yml` (daily bump); `CACHIX_AUTH_TOKEN` w/ approval|V5,V7
+T13|.|GitHub repo `pr0d1r2/nix-codebuff` PUBLIC, first push, w/ approval; `gh repo view` ∀ named repo first. prompt names `nix-orca`, ⊥ resolvable 2026-10-24; owner: both repos go public same weekend ∴ ! PUBLIC before this repo's first push|V6,V7
+T14|.|bump PR author: token source for `upstream.yml` to open PR (owner decision); until then workflow fails red on newer release, ⊥ PR|V7
+T15|.|owner review of agent decisions: baseline as 2nd package, `meta.license = asl20`, `shipLogs` default upstream|-
+T16|.|upstream issues w/ approval: invalid darwin signatures (R4); telemetry w/o opt-out (R10)|V7
