@@ -11,7 +11,8 @@
 # Usage: frozen.sh BIN VERSION
 #   exit 0 frozen, 1 a finding, 2 usage.
 # Env seams: SOCAT (default socat), the listener, run as
-# `socat -d -d TCP-LISTEN:0,bind=127.0.0.1,fork /dev/null` and read from
+# `socat -d -d -lf <log> TCP-LISTEN:0,bind=127.0.0.1,fork /dev/null`, the
+# log created first (scripts:V6, B1), and read from
 # its log lines `listening on ... 127.0.0.1:<port>` and `accepting
 # connection from` (socat 1.8.1.3); TIMEOUT (default timeout), which
 # bounds the run at 30 s so a BIN that waits on the network fails.
@@ -32,7 +33,11 @@ listener=
 trap '[ -z "$listener" ] || kill "$listener" 2>/dev/null || true; chmod -R u+w "$work" 2>/dev/null || true; rm -rf "$work"' EXIT
 mkdir "$work/home" "$work/cwd"
 
-"$socat" -d -d TCP-LISTEN:0,bind=127.0.0.1,fork /dev/null 2>"$work/listener.log" &
+# The log exists before the listener starts, and the listener is told to
+# write it (scripts:V6): a log created by the backgrounded child raced the
+# first read below (B1).
+: >"$work/listener.log"
+"$socat" -d -d -lf "$work/listener.log" TCP-LISTEN:0,bind=127.0.0.1,fork /dev/null 2>/dev/null &
 listener=$!
 port=
 for _ in $(seq 100); do

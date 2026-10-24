@@ -22,11 +22,21 @@ close $f;
 my $s = IO::Socket::INET->new(LocalAddr => "127.0.0.1", LocalPort => 0, Listen => 16, ReuseAddr => 1) or die;
 my $port = $s->sockport;
 my $log = "2026/10/24 10:36:20 socat[1] N ";
+# `-lf FILE` logs there, as socat does; STUB_LOG_DELAY makes a listener
+# slow to write its first line (B1).
+my $out = \*STDERR;
+for my $i (0 .. $#ARGV - 1) {
+  if ($ARGV[$i] eq "-lf") {
+    select(undef, undef, undef, $ENV{STUB_LOG_DELAY}) if $ENV{STUB_LOG_DELAY};
+    open(my $lf, ">>", $ARGV[$i + 1]) or die;
+    $out = $lf;
+  }
+}
 $| = 1;
-select(STDERR); $| = 1;
-print STDERR "${log}listening on LEN=16 AF=2 127.0.0.1:$port\n";
+select($out); $| = 1;
+print $out "${log}listening on LEN=16 AF=2 127.0.0.1:$port\n";
 while (my $c = $s->accept) {
-  printf STDERR "%saccepting connection from LEN=16 AF=2 127.0.0.1:%d on LEN=16 AF=2 127.0.0.1:%d\n", $log, $c->peerport, $port;
+  printf $out "%saccepting connection from LEN=16 AF=2 127.0.0.1:%d on LEN=16 AF=2 127.0.0.1:%d\n", $log, $c->peerport, $port;
   close $c;
 }
 EOF
@@ -159,6 +169,26 @@ EOF
   SOCAT="$BATS_TEST_TMPDIR/stubs/socat-dead" run --separate-stderr "$check" ./clean 1.0.688
   [ "$status" -eq 1 ]
   [ "$stderr" = "frozen: the loopback listener did not start; nothing would count connections (nix:V1)" ]
+}
+
+@test "the listener logs to a file the check names, never to its stderr (scripts:V6, B1)" {
+  run --separate-stderr "$check" ./clean 1.0.688
+  [ "$status" -eq 0 ]
+  grep -E -- '(^| )-lf [^ ]+/listener\.log( |$)' "$STUB_LOG"
+}
+
+@test "a listener slow to write its log still counts, the log is there from the start (scripts:V6, B1)" {
+  export STUB_LOG_DELAY=0.5
+  cat >reach <<'EOF'
+#!/usr/bin/env bash
+port=${http_proxy##*:}
+(exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null
+echo 1.0.688
+EOF
+  chmod +x reach
+  run --separate-stderr "$check" ./reach 1.0.688
+  [ "$status" -eq 1 ]
+  [ "$stderr" = "frozen: the loopback proxy saw 1 connection(s); BIN must make none (nix:V1)" ]
 }
 
 @test "the listener is gone after the check" {
