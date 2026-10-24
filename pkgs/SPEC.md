@@ -29,11 +29,7 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 
 ## §I INTERFACES
 
-- file: `pkgs/codebuff/sources.json`:
-  ```json
-  { "version": "1.0.688",
-    "assets": { "<target>": { "url": "https://github.com/CodebuffAI/codebuff-community/releases/download/v1.0.688/codebuff-<target>.tar.gz", "hash": "sha256-…" } } }
-  ```
+- file: `pkgs/codebuff/sources.json`: `{ "version": "1.0.688", "assets": { "<target>": { "url": "https://github.com/CodebuffAI/codebuff-community/releases/download/v1.0.688/codebuff-<target>.tar.gz", "hash": "sha256-…" } } }`.
 - file: `sources.json` `<target>` ∈ `darwin-arm64` `darwin-x64` `linux-arm64` `linux-x64` `linux-x64-baseline`. keys sorted, 2-space indent, trailing newline.
 - nix: `callPackage ./pkgs/codebuff/package.nix { baseline ? false; shipLogs ? true; }`.
 - out: `bin/codebuff`, `bin/cb`, `libexec/codebuff/{codebuff,tree-sitter.wasm}`.

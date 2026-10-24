@@ -50,13 +50,7 @@ self|.|-
 
 ## §I INTERFACES
 
-- input:
-  ```nix
-  inputs = {
-    nixpkgs-lock.url = "github:pr0d1r2/nixpkgs-lock";
-    nixpkgs.follows = "nixpkgs-lock/nixpkgs";
-  };
-  ```
+- input: `inputs.nixpkgs-lock.url = "github:pr0d1r2/nixpkgs-lock"; inputs.nixpkgs.follows = "nixpkgs-lock/nixpkgs";` — nothing else.
 - flake: `packages.<sys>.codebuff` ∀ 4 sys; `packages.<sys>.default` ≡ `codebuff` (`pkgs` node).
 - flake: `packages.x86_64-linux.codebuff-baseline` (`pkgs` node).
 - flake: `overlays.default` → adds exactly `codebuff` (D, goal 2).
