@@ -10,6 +10,7 @@ rel|path|lens
 up|.|-
 self|nix|`nix/checks.nix`: frozen, offline, untouched, layout, overlay checks
 sib|pkgs|`pkgs/codebuff/package.nix`, `sources.json`: fetch, install, wrap
+sib|scripts|bash for bump & checks; mirrored bats
 
 ## §C CONSTRAINTS
 
