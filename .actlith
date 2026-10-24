@@ -11,3 +11,4 @@ id|kind|systems|cache|args
 ## hand-written
 path|reason
 .github/workflows/build.yml|the `build` kind takes one package and lets cachix-action push all a job builds, the `gate` kind pushes all or reads no cache, and both refuse x86_64-darwin; only Linux codebuff and codebuff-baseline closures are pushed, from main (root V5), and x86_64-darwin is evaluated only (paradigm T19)
+.github/workflows/upstream.yml|the `upstream` kind pushes a branch and opens a PR with GITHUB_TOKEN; until a bump-PR token exists (root T14) a newer release fails red with its version and nothing is pushed (scripts §C)
