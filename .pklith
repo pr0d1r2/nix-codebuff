@@ -19,6 +19,8 @@ id|category|nix|glob|check|fix|env|msg
 lock-graph|supply|jq|**/flake.lock, gate/lock-graph.sh, gate/lock-graph.jq|bash gate/lock-graph.sh dev/flake.lock && if test -e flake.lock; then bash gate/lock-graph.sh flake.lock nixpkgs nixpkgs-lock; fi|-|-|a flake lock holds more or fewer than one nixpkgs, an input locks its own, or the root flake has an input besides nixpkgs-lock (root V1)
 # Private names never reach a commit (gate T2, root V6, paradigm/V37).
 name-guard|gate|gnugrep|**/*|bash gate/name-guard.sh {{files}}|-|-|a private name is staged (root V6); the hit names the denylist entry, never the name
+# A hash on main is a real literal, never a placeholder (gate T3, root V2).
+no-fakehash|supply|gnugrep|**/*.nix, **/sources.json|bash gate/no-fakehash.sh {{files}}|-|-|a placeholder hash (lib.fakeHash, all-A SRI) is staged; hashes on main are real literals (root V2)
 
 ## types
 type|checks|min|exempt
@@ -27,7 +29,7 @@ bats|bats-parse|-|-
 editorconfig|-|-|written by pklith (seed or gen)
 gitattributes|-|-|written by pklith (seed or gen)
 md|markdownlint|-|-
-nix|nixfmt, statix, deadnix|-|-
+nix|nixfmt, statix, deadnix, no-fakehash|-|-
 path:**/SPEC.md|markdownlint, mth-fmt, mth-check, sherd-check, sherd-nav, sherd-budget|-|-
 path:.context-limits|sherd-budget|-|-
 path:.envrc|shellcheck|-|-

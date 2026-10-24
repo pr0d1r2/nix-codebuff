@@ -111,6 +111,10 @@ steps: Mapping<String, Config.Step> = new {
     glob = List("**/flake.lock", "gate/lock-graph.sh", "gate/lock-graph.jq")
     check = "command -v bash >/dev/null 2>&1 || { echo 'lock-graph: bash is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; bash gate/lock-graph.sh dev/flake.lock && if test -e flake.lock; then bash gate/lock-graph.sh flake.lock nixpkgs nixpkgs-lock; fi || { echo 'lock-graph: a flake lock holds more or fewer than one nixpkgs, an input locks its own, or the root flake has an input besides nixpkgs-lock (root V1)' >&2; exit 1; }"
   }
+  ["no-fakehash"] {
+    glob = List("**/*.nix", "**/sources.json")
+    check = "command -v bash >/dev/null 2>&1 || { echo 'no-fakehash: bash is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; bash gate/no-fakehash.sh {{files}} || { echo 'no-fakehash: a placeholder hash (lib.fakeHash, all-A SRI) is staged; hashes on main are real literals (root V2)' >&2; exit 1; }"
+  }
   ["name-guard"] {
     glob = List("**/*")
     check = "command -v bash >/dev/null 2>&1 || { echo 'name-guard: bash is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; bash gate/name-guard.sh {{files}} || { echo 'name-guard: a private name is staged (root V6); the hit names the denylist entry, never the name' >&2; exit 1; }"
