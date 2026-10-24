@@ -122,4 +122,7 @@ steps: Mapping<String, Config.Step> = new {
 }
 
 push: Mapping<String, Config.Step> = new {
+  ["bats-unit"] {
+    check = "command -v bats >/dev/null 2>&1 || { echo 'bats-unit: bats is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; bats --recursive tests || { echo 'bats-unit: a bats test under tests/ failed, or there is no tests/ directory' >&2; exit 1; }"
+  }
 }
