@@ -73,6 +73,7 @@ EOF
 
 @test "a wrapper without the wasm --set is refused (pkgs:V3)" {
   sed -i.bak '/CODEBUFF_TREE_SITTER_WASM_PATH/d' "$out/bin/codebuff"
+  rm "$out/bin/codebuff.bak"
   run --separate-stderr "$check" "$out"
   [ "$status" -eq 1 ]
   [ "$stderr" = "layout: the wrapper sets no CODEBUFF_TREE_SITTER_WASM_PATH (pkgs:V3, R9)" ]
@@ -80,6 +81,7 @@ EOF
 
 @test "a wrapper whose wasm path is not the libexec file is refused (pkgs:V3)" {
   sed -i.bak "s|^export CODEBUFF_TREE_SITTER_WASM_PATH=.*|export CODEBUFF_TREE_SITTER_WASM_PATH='/nonexistent/tree-sitter.wasm'|" "$out/bin/codebuff"
+  rm "$out/bin/codebuff.bak"
   run --separate-stderr "$check" "$out"
   [ "$status" -eq 1 ]
   [ "$stderr" = "layout: the wrapper sets CODEBUFF_TREE_SITTER_WASM_PATH=/nonexistent/tree-sitter.wasm, not the existing $lib/tree-sitter.wasm (pkgs:V3, R9)" ]
@@ -87,6 +89,7 @@ EOF
 
 @test "a wrapper without a CODEBUFF_RG_PATH default is refused (pkgs:V3)" {
   sed -i.bak '/CODEBUFF_RG_PATH/d' "$out/bin/codebuff"
+  rm "$out/bin/codebuff.bak"
   run --separate-stderr "$check" "$out"
   [ "$status" -eq 1 ]
   [ "$stderr" = "layout: the wrapper sets no default CODEBUFF_RG_PATH (pkgs:V3, R8)" ]
@@ -94,6 +97,7 @@ EOF
 
 @test "a forced CODEBUFF_RG_PATH (--set, not --set-default) is refused (pkgs:V3)" {
   sed -i.bak "s|^export CODEBUFF_RG_PATH=.*|export CODEBUFF_RG_PATH='$rg'|" "$out/bin/codebuff"
+  rm "$out/bin/codebuff.bak"
   run --separate-stderr "$check" "$out"
   [ "$status" -eq 1 ]
   [ "$stderr" = "layout: the wrapper sets no default CODEBUFF_RG_PATH (pkgs:V3, R8)" ]
@@ -108,6 +112,7 @@ EOF
 
 @test "a wrapper that keeps BUN_BE_BUN is refused (pkgs:V3)" {
   sed -i.bak '/^unset BUN_BE_BUN$/d' "$out/bin/codebuff"
+  rm "$out/bin/codebuff.bak"
   run --separate-stderr "$check" "$out"
   [ "$status" -eq 1 ]
   [ "$stderr" = "layout: the wrapper does not unset BUN_BE_BUN (pkgs:V3, R15)" ]
@@ -115,6 +120,7 @@ EOF
 
 @test "a wrapper that execs something but the libexec binary is refused" {
   sed -i.bak "s|^exec .*|exec \"$BATS_TEST_TMPDIR/other\" \"\$@\"|" "$out/bin/codebuff"
+  rm "$out/bin/codebuff.bak"
   run --separate-stderr "$check" "$out"
   [ "$status" -eq 1 ]
   [ "$stderr" = "layout: the wrapper does not exec $lib/codebuff (pkgs §C)" ]
