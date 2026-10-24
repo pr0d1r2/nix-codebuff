@@ -37,6 +37,7 @@ V2: bump refuses release missing ∀ 1 of 5 target assets: exit 1, `sources.json
 V3: bump ⊥ picks prerelease, draft, `freebuff-*`, `v*-beta.N`; ⊥ downgrades.
 V4: bump refuses when prefetch SRI ≠ GitHub `digest`.
 V5: ∀ script has mirrored bats & passes w/ stubs only; orphan bats fails.
+V6: `checks/frozen.sh` creates the listener log itself, before the listener starts, & hands its path to the listener (`-lf`); ⊥ reads a file the listener has not yet created (B1).
 
 ## §T TASKS
 
@@ -45,7 +46,9 @@ T1|x|`bump.sh` + fixtures (release list w/ freebuff & beta tags, missing asset, 
 T2|x|`checks/*.sh` per `nix` node: frozen, tree-sitter, untouched, layout|V5
 T3|.|`upstream.yml` via `.actlith`|V1
 T4|x|`dev/shell-hook.sh`, RED bats first|V5
+T5|.|B1: `frozen.sh` pre-creates listener log, passes `-lf`; RED bats w/ a listener slow to write its log|V6
 
 ## §B BUGS
 
 id|date|cause|fix
+B1|2026-10-24|`frozen.sh` started socat w/ `2>"$work/listener.log" &`: the log is created by the backgrounded child, so the first `sed` raced it ∴ `sed: can't read …/listener.log`, exit 2. `frozen-cb` failed on aarch64-linux in a CI rerun of 40085047052 after passing in its first attempt|V6
