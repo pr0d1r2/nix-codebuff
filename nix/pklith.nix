@@ -11,6 +11,7 @@ catalog: [
   catalog.nixfmt
   catalog.ripsecrets
   catalog.shellcheck
+  catalog.sherd
   catalog.shfmt
   catalog.statix
   catalog.typos
