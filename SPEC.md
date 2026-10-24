@@ -13,6 +13,7 @@ nix flake + bash scripts. packaging only: fetch upstream release asset by hash, 
 ## §F FEDERATION
 
 dir|owns|⊥owns|tokens
+pkgs|`pkgs/codebuff/package.nix`, `sources.json`: fetch, install, wrap|bump (`scripts`), checks (`nix`)|-
 
 ## §N NAV
 
