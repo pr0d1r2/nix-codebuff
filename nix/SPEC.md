@@ -41,7 +41,7 @@ V3: ∀ check script has mirrored bats (`scripts` node owns script & bats).
 
 id|status|task|cites
 T1|x|`checks.nix` skeleton & `frozen`|V1
-T2|x|`tree-sitter`, `untouched`, `layout`, `overlay`, `meta`. built aarch64-darwin 2026-10-24; Linux & x86_64-darwin builds wait for root T10, T9|V2,V3
+T2|x|`tree-sitter`, `untouched`, `layout`, `overlay`, `meta`. built aarch64-darwin & both Linux in CI 2026-10-24; x86_64-darwin waits for root T9|V2,V3
 
 ## §B BUGS
 
