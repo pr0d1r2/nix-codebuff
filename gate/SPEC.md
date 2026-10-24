@@ -36,9 +36,10 @@ V3: fakehash guard fails on planted `lib.fakeHash` (`.:V2`).
 ## §T TASKS
 
 id|status|task|cites
-T1|.|`lock-graph.sh` + fixtures|V1
-T2|.|`name-guard.sh` + fixtures|V2
-T3|.|`no-fakehash.sh` + fixtures|V3
+T1|x|`lock-graph.sh` + fixtures; root inputs allowed by name|V1
+T2|x|`name-guard.sh` denylist half + fixtures|V2
+T3|x|`no-fakehash.sh` + fixtures|V3
+T4|.|`name-guard.sh` allowlist half: ∀ repo named \| linked ∈ committed public list, CI side (`paradigm/V37`)|V2
 
 ## §B BUGS
 

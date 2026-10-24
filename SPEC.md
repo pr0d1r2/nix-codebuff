@@ -100,7 +100,7 @@ T3|x|freeze `SPEC-PROMPT.md`: line 1 → `HISTORICAL INPUT`, own commit|-
 T4|x|`.context-limits` from `sherd budget` + 12–20%|-
 T5|x|`.gitignore`: `.claude/`, `.direnv/`, `result*`, `.private/`|V6
 T6|x|dev shell (`dev`); ask human to reload|V1
-T7|.|guardrails via `.pklith`, 1 check per commit, planted violation each; ask human to reload|V1,V2,V6
+T7|~|guardrails via `.pklith`, 1 check per commit, planted violation each; 33 steps green on `hk check --all` 2026-10-24; ask human to reload (shell gains `nix/pklith.nix` tools)|V1,V2,V6
 T8|.|waves via `sherd wave`, order: `pkgs` aarch64-darwin → `nix` checks → Linux via builder \| CI → `scripts` bump → CI → `docs`|V2,V3,V4
 T9|.|measure: darwin exec of untouched binary on both archs (invalid signature, R4); kernel refusal → gap question to owner, ⊥ re-sign|V3
 T10|.|measure: Linux `autoPatchelfHook` keeps Bun payload: `codebuff --version` on x86_64-linux & aarch64-linux after patch|V3
@@ -110,6 +110,7 @@ T13|.|GitHub repo `pr0d1r2/nix-codebuff` PUBLIC, first push, w/ approval; `gh re
 T14|.|bump PR author: token source for `upstream.yml` to open PR (owner decision); until then workflow fails red on newer release, ⊥ PR|V7
 T15|.|owner review of agent decisions: baseline as 2nd package, `meta.license = asl20`, `shipLogs` default upstream|-
 T16|.|upstream issues w/ approval: invalid darwin signatures (R4); telemetry w/o opt-out (R10)|V7
+T17|.|pklith issues w/ approval: `pklith confirm` passes w/ empty `pre-commit` hook (reads `check` only; `paradigm/V22` wants ∀ hook); tool probe reads `[ ! -f` as tool `-f`|V7
 
 ## §B BUGS
 
