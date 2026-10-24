@@ -19,7 +19,7 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 
 - inputs: `nixpkgs-lock` (nixpkgs follows), `nix-hk` (follows `nixpkgs-lock`), `pklith` | `actlith` as gate needs, ∀ following same nixpkgs (`.:V1`, `paradigm/V20`).
 - tools: hk (`nix-hk` overlay), pkl, git, nixfmt, statix, deadnix, shellcheck, shfmt, bats, actionlint, jq, gh; fleet tags: microlith `v0.7.4` (`mth`), sherd `v0.5.4`, itok `v0.3.1`, pklith `v0.1.0`, actlith `v0.1.0`, xenolith `v0.1.0`. bump = own commit.
-- `x86_64-darwin`: fleet tools w/o build there (microlith, pklith, actlith, xenolith; nix-orca measurement 2026-10-14) left out & named on entry; gate needing one fails, ⊥ skips.
+- `x86_64-darwin`: fleet tools w/o build there (microlith, itok, pklith, xenolith; measured 2026-10-24: `inputs.<tool>.packages.x86_64-darwin` absent; actlith present) left out & named on entry; gate needing one fails, ⊥ skips.
 - shell hook = `scripts/dev/shell-hook.sh` (`scripts` node), ⊥ inline shell (`.` §C).
 - `.envrc` → `use flake ./dev`; human reload checkpoint after shell lands.
 - shell on ∀ 4 sys (`paradigm/V20`).
