@@ -15,7 +15,7 @@ nix flake + bash scripts. packaging only: fetch upstream release asset by hash, 
 dir|owns|⊥owns|tokens
 pkgs|`pkgs/codebuff/package.nix`, `sources.json`: fetch, install, wrap|bump (`scripts`), checks (`nix`)|-
 nix|`nix/checks.nix`: frozen, offline, untouched, layout, overlay checks|check script bodies & bats (`scripts`), package (`pkgs`)|-
-scripts|bash for bump & checks; mirrored bats|flake outputs (`nix`, `pkgs`), workflows (`.actlith`)|-
+scripts|bash for bump, checks & dev shell entry hook; mirrored bats|flake outputs (`nix`, `pkgs`), workflows (`.actlith`)|-
 dev|dev shell flake, hook install on entry|hk steps (`.pklith`), gate scripts (`gate`)|-
 gate|gate scripts: lock-graph, name, fakehash guards; their bats|hk steps (`.pklith`, `hk.pkl`), dev shell (`dev`)|-
 docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER|spec rules, package behaviour (`pkgs`)|-

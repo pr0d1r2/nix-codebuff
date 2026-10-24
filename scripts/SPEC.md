@@ -2,13 +2,13 @@
 
 ## §G GOAL
 
-bash scripts CI & humans run: upstream bump writing `pkgs/codebuff/sources.json`, check scripts `nix` node loads; each w/ mirrored bats in `tests/unit/scripts/`.
+bash scripts CI & humans run: upstream bump writing `pkgs/codebuff/sources.json`, check scripts `nix` node loads, dev shell entry hook `dev` node runs; each w/ mirrored bats in `tests/unit/scripts/`.
 
 ## §N NAV
 
 rel|path|lens
 up|.|-
-self|scripts|bash for bump & checks; mirrored bats
+self|scripts|bash for bump, checks & dev shell entry hook; mirrored bats
 sib|pkgs|`pkgs/codebuff/package.nix`, `sources.json`: fetch, install, wrap
 sib|nix|`nix/checks.nix`: frozen, offline, untouched, layout, overlay checks
 sib|dev|dev shell flake, hook install on entry
@@ -27,6 +27,7 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 
 - cmd: `scripts/bump.sh` → exit 0 bumped, 3 up to date, 1 refused (stderr names missing target | hash mismatch). `--check` → exit 3 up to date, 0 newer exists, writes nothing.
 - cmd: `scripts/checks/<name>.sh` per `nix` §I check.
+- cmd: `scripts/dev/shell-hook.sh SYSTEM [ABSENT-TOOL...]` → `hk.pkl` & `.githooks/` ∃ & hk on `PATH` → `git config --local core.hooksPath .githooks`; ⊥ hk → stderr `nix-codebuff(shell): no hk on PATH, git hooks NOT installed`; absent tools named on stderr; exit 0 always, 2 = usage (`dev:V3`).
 - env: `GH_TOKEN` (CI).
 
 ## §V INVARIANTS
@@ -43,6 +44,7 @@ id|status|task|cites
 T1|.|`bump.sh` + fixtures (release list w/ freebuff & beta tags, missing asset, digest mismatch)|V1,V2,V3,V4
 T2|.|`checks/*.sh` per `nix` node|V5
 T3|.|`upstream.yml` via `.actlith`|V1
+T4|.|`dev/shell-hook.sh`, RED bats first|V5
 
 ## §B BUGS
 
