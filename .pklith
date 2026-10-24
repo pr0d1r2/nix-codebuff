@@ -38,6 +38,9 @@ pklith-check|gate|-|-|pklith check|-|-|a tracked file type has no row in .pklith
 no-core-worktree|gate|git|-|test -z "$(git config --local --get core.worktree)"|-|-|core.worktree is set in the shared .git/config, so every worktree acts on one checkout (paradigm/V15)
 # The gate is complete, fresh, runnable, and has steps (paradigm/V22).
 confirm|gate|-|-|pklith confirm|-|-|the gate is incomplete, stale, unrunnable or evaluates to no steps (paradigm/V22)
+# Every JSON file parses; the catalog has no JSON check (pkgs T1:
+# `pkgs/codebuff/sources.json` is the first tracked one).
+json|lint|jq|**/*.json|jq -e . {{files}} >/dev/null|-|-|a JSON file does not parse
 
 ## types
 type|checks|min|exempt
@@ -60,6 +63,7 @@ lock|lock-graph|-|-
 markdownlintignore|-|-|ignore patterns, no linter reads them
 path:.markdownlint.yaml|-|-|markdownlint configuration; yamllint arrives with the workflows (root T12)
 jq|-|-|jq program run by its shell script; that script's bats test runs it
+json|json, no-fakehash|-|-
 path:tests/unit/scripts/fixtures/**|-|-|test fixture data; the bats test that reads it is its check
 
 ## rules

@@ -1,0 +1,25 @@
+{
+  "assets": {
+    "darwin-arm64": {
+      "hash": "sha256-VSL1JPy+ZMn0cd7iP/DLZcCWOTz0vwgo27eppxNSgIg=",
+      "url": "https://github.com/CodebuffAI/codebuff-community/releases/download/v1.0.688/codebuff-darwin-arm64.tar.gz"
+    },
+    "darwin-x64": {
+      "hash": "sha256-yBIsTp4xPQETrb/5CS2O/x3t6EnoP7CqcpZYgpNmni8=",
+      "url": "https://github.com/CodebuffAI/codebuff-community/releases/download/v1.0.688/codebuff-darwin-x64.tar.gz"
+    },
+    "linux-arm64": {
+      "hash": "sha256-Bsoc/nWWt+t/hluRGpoOOzMud/OllAQk9kJ99YEbmmA=",
+      "url": "https://github.com/CodebuffAI/codebuff-community/releases/download/v1.0.688/codebuff-linux-arm64.tar.gz"
+    },
+    "linux-x64": {
+      "hash": "sha256-Lzk1o7JpFQlCkkYOxJgQUb5b+ti5YZMuzoY69m8bZTY=",
+      "url": "https://github.com/CodebuffAI/codebuff-community/releases/download/v1.0.688/codebuff-linux-x64.tar.gz"
+    },
+    "linux-x64-baseline": {
+      "hash": "sha256-VRw58KM9nTFtE0cGLKRQuvIwUf97peuHSoWH0V6v38Q=",
+      "url": "https://github.com/CodebuffAI/codebuff-community/releases/download/v1.0.688/codebuff-linux-x64-baseline.tar.gz"
+    }
+  },
+  "version": "1.0.688"
+}
