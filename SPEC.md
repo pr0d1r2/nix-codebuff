@@ -13,3 +13,9 @@ nix flake + bash scripts. packaging only: fetch upstream release asset by hash, 
 ## §F FEDERATION
 
 dir|owns|⊥owns|tokens
+
+## §N NAV
+
+rel|path|lens
+up|-|-
+self|.|-
