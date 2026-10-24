@@ -18,6 +18,7 @@ nix|`nix/checks.nix`: frozen, offline, untouched, layout, overlay checks|check s
 scripts|bash for bump & checks; mirrored bats|flake outputs (`nix`, `pkgs`), workflows (`.actlith`)|-
 dev|dev shell flake, hook install on entry|hk steps (`.pklith`), gate scripts (`gate`)|-
 gate|gate scripts: lock-graph, name, fakehash guards; their bats|hk steps (`.pklith`, `hk.pkl`), dev shell (`dev`)|-
+docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER|spec rules, package behaviour (`pkgs`)|-
 
 ## §N NAV
 
