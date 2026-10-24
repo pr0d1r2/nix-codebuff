@@ -9,3 +9,6 @@ indent_style = space
 
 [{Makefile,*.mk,go.mod,*.go}]
 indent_style = tab
+
+[*.{sh,bats}]
+indent_size = 2
