@@ -263,11 +263,11 @@ compiled from the `cli/` directory of
 Apache-2.0 and has no licence of its own in `cli/package.json`. The release
 repository is MIT, which covers its own files; the npm launcher is MIT too,
 and is not shipped. nixpkgs' `codebuff` says MIT because it packages the
-launcher. This reading is an agent decision of 2026-10-24, awaiting the owner's
-review.
+launcher. This reading was an agent decision of 2026-10-24; the owner accepted
+it the same day.
 
-This repository's own licence is not decided yet; the owner chooses it before
-release. Until then there is no `LICENSE` file.
+This repository's own files (the nix, the scripts, the docs) are under the
+MIT licence, in [`LICENSE`](LICENSE).
 
 ## More
 

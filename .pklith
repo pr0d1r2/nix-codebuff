@@ -70,6 +70,7 @@ json|json, no-fakehash|-|-
 path:tests/unit/scripts/fixtures/**|-|-|test fixture data; the bats test that reads it is its check
 actlith|actlith-check|-|-
 path:.github/workflows/*.yml|actionlint, zizmor, yamllint, actlith-check|-|-
+LICENSE|-|-|licence text, no linter reads it
 
 ## rules
 id|kind|select|target|except
