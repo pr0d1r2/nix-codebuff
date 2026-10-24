@@ -80,3 +80,13 @@ R12|licences|`CodebuffAI/codebuff` Apache-2.0 (id 826515105); `cli/package.json`
 R13|pin `da6dc0e` 2026-10-24|nixpkgs `26.05.20261021.da6dc0e` via `nixpkgs-lock` `e95fdd0`; `codebuff` 1.0.674 = `buildNpmPackage` of npm launcher (∴ downloads at first run); `ripgrep` 15.1.0|`nix eval github:NixOS/nixpkgs/<pin>#<attr>`
 R14|launcher-only package fails offline|nixpkgs `codebuff` ships `index.js` `launcher.js`; ∀ start → registry check, first start → download into `$HOME` ∴ ⊥ frozen, ⊥ reproducible (prompt Problem)|R6, R13
 R15|Bun's own CLI|runtime carries `BUN_BE_BUN` (exe acts as `bun`, incl `bun upgrade`, `bun install`) ∴ wrapper unsets it|bundle scan
+
+## §V INVARIANTS
+
+V1: lock graph: exactly 1 nixpkgs node; root inputs ≡ {`nixpkgs-lock`}; ∀ `nixpkgs` follows it; gate fails else (D1).
+V2: ∀ fetched asset: URL `https://github.com/CodebuffAI/codebuff-community/releases/download/v<version>/codebuff-<target>.tar.gz`, literal SRI hash from `sources.json`; ⊥ `lib.fakeHash` on `main`; ⊥ `codebuff.com` URL (D2).
+V3: ⊥ run-time download, self-update, update check (D4). proven by `nix` node checks; closed by `pkgs` node wrapper.
+V4: overlay adds exactly `codebuff`: `attrNames (overlay {} {})` ≡ [`codebuff`] (goal 2).
+V5: ∀ cachix push ⊆ Linux `codebuff` | `codebuff-baseline` closure, `main` only; ⊥ darwin; verified by narinfo 200 from separate job (D6).
+V6: ⊥ private repo named in committed text (`paradigm/V37`, D7).
+V7: ∀ outward act ∈ §C approval list has human approval on record.
