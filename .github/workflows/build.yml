@@ -1,0 +1,155 @@
+# Hand-written, listed in .actlith: actlith v0.1.0's `build` kind takes one
+# package per row and lets cachix-action push whatever a job built, and its
+# `gate` kind pushes all a job builds or reads no cache. Here only the Linux
+# `codebuff` and `codebuff-baseline` closures may reach the cache, from
+# `main` only (root V5), and actlith refuses x86_64-darwin.
+---
+name: build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # The local gate, unchanged (paradigm/V23): one hk.pkl on commit, push
+  # and CI. stdin closed, as on the hooks.
+  gate:
+    name: gate (${{ matrix.system }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - system: x86_64-linux
+            os: ubuntu-24.04
+          - system: aarch64-linux
+            os: ubuntu-24.04-arm
+          - system: aarch64-darwin
+            os: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: cachix/install-nix-action@630ae543ea3a38a9a4166f03376c02c50f408342  # v31.11.0
+        with:
+          extra_nix_config: |
+            extra-substituters = https://pr0d1r2.cachix.org
+            extra-trusted-public-keys = pr0d1r2.cachix.org-1:NfWjbhgAj41byXhCKiaE+av3Vnphm1fTezHXEGsiQIM=
+      - run: nix develop ./dev --command hk check --all </dev/null
+
+  # Every system evaluates from one host, x86_64-darwin included: GitHub has
+  # no Intel macOS runner actlith accepts (paradigm T19), so that system is
+  # built on the owner's Intel Mac before push (root §C) and only evaluated
+  # here, so it cannot rot silently.
+  eval:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: cachix/install-nix-action@630ae543ea3a38a9a4166f03376c02c50f408342  # v31.11.0
+        with:
+          extra_nix_config: |
+            extra-substituters = https://pr0d1r2.cachix.org
+            extra-trusted-public-keys = pr0d1r2.cachix.org-1:NfWjbhgAj41byXhCKiaE+av3Vnphm1fTezHXEGsiQIM=
+      - run: nix flake check --all-systems --no-build
+
+  # One native runner per system: a cross-built path is a different store
+  # path, never the one consumers substitute.
+  build:
+    name: build (${{ matrix.system }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - system: x86_64-linux
+            os: ubuntu-24.04
+          - system: aarch64-linux
+            os: ubuntu-24.04-arm
+          - system: aarch64-darwin
+            os: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: cachix/install-nix-action@630ae543ea3a38a9a4166f03376c02c50f408342  # v31.11.0
+        with:
+          extra_nix_config: |
+            extra-substituters = https://pr0d1r2.cachix.org
+            extra-trusted-public-keys = pr0d1r2.cachix.org-1:NfWjbhgAj41byXhCKiaE+av3Vnphm1fTezHXEGsiQIM=
+      # Builds the packages and runs every nix §I check of this system.
+      - run: nix flake check --print-build-logs
+      # Linux closures only, from main only (root V5): no darwin push, and
+      # pull requests (forks included) never see the secret. `cachix push`
+      # of an out path sends its closure and nothing else, and a refused
+      # push fails this step; verify-cache still asks the cache.
+      - if: >-
+          endsWith(matrix.system, '-linux')
+          && github.event_name == 'push'
+          && github.ref == 'refs/heads/main'
+        run: >-
+          nix build --no-link --print-out-paths ".#packages.$SYSTEM.codebuff"
+          | nix shell --inputs-from . nixpkgs#cachix --command cachix push pr0d1r2
+        env:
+          SYSTEM: ${{ matrix.system }}
+          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+      # The non-AVX2 build exists for x86_64-linux only (root §C).
+      - if: >-
+          matrix.system == 'x86_64-linux'
+          && github.event_name == 'push'
+          && github.ref == 'refs/heads/main'
+        run: >-
+          nix build --no-link --print-out-paths .#packages.x86_64-linux.codebuff-baseline
+          | nix shell --inputs-from . nixpkgs#cachix --command cachix push pr0d1r2
+        env:
+          CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
+
+  # Is every pushed path in the cache? A push failure can read as a green
+  # job (lesson from pr0d1r2/nix-hk: cachix-action logs a 403 and stays
+  # green), so a separate job asks the cache itself: each pushed out path's
+  # narinfo answers 200 (root V5).
+  verify-cache:
+    needs: [build]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        installable:
+          - .#packages.x86_64-linux.codebuff
+          - .#packages.x86_64-linux.codebuff-baseline
+          - .#packages.aarch64-linux.codebuff
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: cachix/install-nix-action@630ae543ea3a38a9a4166f03376c02c50f408342  # v31.11.0
+      # Evaluation is cross-system: one runner resolves every out path
+      # without building any.
+      - run: |
+          path=$(nix eval --raw "$INSTALLABLE")
+          hash=$(basename "$path" | cut -d- -f1)
+          code=$(curl -s -o /dev/null -w '%{http_code}' "https://pr0d1r2.cachix.org/$hash.narinfo")
+          echo "$INSTALLABLE $path -> $code"
+          if [ "$code" != 200 ]; then
+            echo "::error::$path is not in pr0d1r2.cachix.org after a main build" >&2
+            echo "::error::CACHIX_AUTH_TOKEN must be a per-cache token with WRITE access to pr0d1r2" >&2
+            exit 1
+          fi
+        env:
+          INSTALLABLE: ${{ matrix.installable }}

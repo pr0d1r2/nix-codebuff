@@ -1,0 +1,43 @@
+# Hand-written, listed in .actlith: actlith v0.1.0's `upstream` kind pushes
+# a branch and opens a PR with GITHUB_TOKEN. Until the owner names a token
+# source for the bump PR (root T14), a newer release fails this job red with
+# the version in its log, and nothing is pushed (scripts §C).
+---
+name: upstream
+
+on:
+  schedule:
+    - cron: "20 6 * * *"
+  workflow_dispatch:
+
+# A scheduled run is never cancelled; one at a time.
+concurrency:
+  group: upstream
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  bump:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: cachix/install-nix-action@630ae543ea3a38a9a4166f03376c02c50f408342  # v31.11.0
+      # scripts/bump.sh --check (scripts §I): exit 3 up to date (green),
+      # 0 a newer stable release, its version on stdout (red: no bump-PR
+      # token yet, root T14), 1 refused (red: its stderr names why).
+      - run: |
+          rc=0
+          version=$(nix shell --inputs-from . nixpkgs#gh nixpkgs#jq --command bash scripts/bump.sh --check) || rc=$?
+          case "$rc" in
+          3) ;;
+          0) echo "::error::codebuff $version is out; run scripts/bump.sh, open the PR by hand (root T14)" >&2 ;;
+          *) echo "::error::scripts/bump.sh --check refused (exit $rc); its stderr above names why" >&2 ;;
+          esac
+          test "$rc" -eq 3
+        env:
+          GH_TOKEN: ${{ github.token }}
