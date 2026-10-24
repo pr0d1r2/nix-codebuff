@@ -50,7 +50,7 @@ steps: Mapping<String, Config.Step> = new {
     fix = "nixfmt {{files}}"
   }
   ["shfmt"] {
-    glob = List("**/*.sh", "**/*.bash")
+    glob = List("**/*.sh", "**/*.bash", "**/*.bats")
     check = "command -v shfmt >/dev/null 2>&1 || { echo 'shfmt: shfmt is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; shfmt --diff {{files}} || { echo 'shfmt: shell script not formatted' >&2; exit 1; }"
     fix = "shfmt --write {{files}}"
   }

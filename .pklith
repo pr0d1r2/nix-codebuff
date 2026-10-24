@@ -26,11 +26,13 @@ no-fakehash|supply|gnugrep|**/*.nix, **/sources.json|bash gate/no-fakehash.sh {{
 bats-unit|coverage|bats|-|bats --recursive tests|-|-|a bats test under tests/ failed, or there is no tests/ directory
 # Overrides the catalog row: bats files are bash too (`docs/SHELL.md`).
 shellcheck|lint|shellcheck|**/*.sh, **/*.bash, **/*.bats, .envrc|shellcheck {{files}}|-|-|shell script finding
+# Overrides the catalog row: shfmt reads bats from the extension.
+shfmt|format|shfmt|**/*.sh, **/*.bash, **/*.bats|shfmt --diff {{files}}|shfmt --write {{files}}|-|shell script not formatted
 
 ## types
 type|checks|min|exempt
 *|name-guard, trailing-whitespace, final-newline, line-endings, no-bom, no-merge-conflict, no-case-conflict, no-broken-symlinks, no-private-key, ripsecrets, typos, editorconfig-checker, no-local-paths|-|-
-bats|bats-parse, shellcheck, bats-unit|-|-
+bats|bats-parse, shellcheck, shfmt, bats-unit|-|-
 editorconfig|-|-|written by pklith (seed or gen)
 gitattributes|-|-|written by pklith (seed or gen)
 md|markdownlint|-|-
