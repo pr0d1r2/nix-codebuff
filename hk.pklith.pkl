@@ -85,6 +85,10 @@ steps: Mapping<String, Config.Step> = new {
     check = "command -v markdownlint >/dev/null 2>&1 || { echo 'markdownlint: markdownlint is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; markdownlint {{files}} || { echo 'markdownlint: markdown style finding; markdownlint names the rule' >&2; exit 1; }"
     fix = "markdownlint --fix {{files}}"
   }
+  ["yamllint"] {
+    glob = List("**/*.yml", "**/*.yaml")
+    check = "command -v yamllint >/dev/null 2>&1 || { echo 'yamllint: yamllint is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; yamllint {{files}} || { echo 'yamllint: YAML error; yamllint names the rule' >&2; exit 1; }"
+  }
   ["bats-parse"] {
     glob = List("**/*.bats")
     check = "command -v bats >/dev/null 2>&1 || { echo 'bats-parse: bats is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; bats --count {{files}} >/dev/null || { echo 'bats-parse: bats file does not parse' >&2; exit 1; }"

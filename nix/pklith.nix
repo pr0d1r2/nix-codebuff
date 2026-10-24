@@ -18,5 +18,6 @@ catalog: [
   catalog.shfmt
   catalog.statix
   catalog.typos
+  catalog.yamllint
   catalog.zizmor
 ]

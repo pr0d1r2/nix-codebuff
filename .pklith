@@ -64,12 +64,12 @@ sh|shellcheck, shfmt|-|-
 gitignore|-|-|ignore patterns, no linter reads them
 lock|lock-graph|-|-
 markdownlintignore|-|-|ignore patterns, no linter reads them
-path:.markdownlint.yaml|-|-|markdownlint configuration; yamllint arrives with the workflows (root T12)
+yaml|yamllint|-|-
 jq|-|-|jq program run by its shell script; that script's bats test runs it
 json|json, no-fakehash|-|-
 path:tests/unit/scripts/fixtures/**|-|-|test fixture data; the bats test that reads it is its check
 actlith|actlith-check|-|-
-path:.github/workflows/*.yml|actionlint, zizmor, actlith-check|-|-
+path:.github/workflows/*.yml|actionlint, zizmor, yamllint, actlith-check|-|-
 
 ## rules
 id|kind|select|target|except
