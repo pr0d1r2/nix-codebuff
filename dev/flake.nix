@@ -105,6 +105,22 @@
       };
       missing = system: unavailable.${system} or [ ];
 
+      # The tools `pklith gen` names for this repository's checks, written to
+      # `nix/pklith.nix` (root T7). Resolved against nixpkgs plus the fleet
+      # inputs, the namespace pklith's catalog uses. Empty until it exists,
+      # and on a system missing fleet tools, whose gates fail anyway.
+      generated =
+        pkgs: system:
+        let
+          file = ../nix/pklith.nix;
+          catalog = pkgs // {
+            microlith = microlith.packages.${system}.default;
+            sherd = sherd.packages.${system}.default;
+            itok = itok.packages.${system}.default;
+          };
+        in
+        if missing system != [ ] || !builtins.pathExists file then [ ] else import file catalog;
+
       present =
         system:
         map (name: fleet.${name}.packages.${system}.default) (
@@ -137,7 +153,8 @@
               pkgs.jq
               pkgs.gh
             ]
-            ++ present system;
+            ++ present system
+            ++ generated pkgs system;
 
             # Deterministic tool output across machines.
             LANG = "C.UTF-8";
