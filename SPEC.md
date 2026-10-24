@@ -100,10 +100,10 @@ V7: ∀ outward act ∈ §C approval list has human approval on record.
 ## §T TASKS
 
 id|status|task|cites
-T1|.|vendor `FORMAT.md` & `FORMAT-EXTENSIONS.md` from paradigm `fda10ea`|-
-T2|.|spec run: root sections & ∀ node, 1 per commit, trailer `spec-run`|-
-T3|.|freeze `SPEC-PROMPT.md`: line 1 → `HISTORICAL INPUT`, own commit|-
-T4|.|`.context-limits` from `sherd budget` + 12–20%|-
+T1|x|vendor `FORMAT.md` & `FORMAT-EXTENSIONS.md` from paradigm `fda10ea`|-
+T2|x|spec run: root sections & ∀ node, 1 per commit, trailer `spec-run`|-
+T3|x|freeze `SPEC-PROMPT.md`: line 1 → `HISTORICAL INPUT`, own commit|-
+T4|x|`.context-limits` from `sherd budget` + 12–20%|-
 T5|.|`.gitignore`: `.claude/`, `.direnv/`, `result*`, `.private/`|V6
 T6|.|dev shell (`dev`); ask human to reload|V1
 T7|.|guardrails via `.pklith`, 1 check per commit, planted violation each; ask human to reload|V1,V2,V6
