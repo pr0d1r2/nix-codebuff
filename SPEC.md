@@ -105,7 +105,7 @@ T2|x|spec run: root sections & ∀ node, 1 per commit, trailer `spec-run`|-
 T3|x|freeze `SPEC-PROMPT.md`: line 1 → `HISTORICAL INPUT`, own commit|-
 T4|x|`.context-limits` from `sherd budget` + 12–20%|-
 T5|x|`.gitignore`: `.claude/`, `.direnv/`, `result*`, `.private/`|V6
-T6|~|dev shell (`dev`); ask human to reload|V1
+T6|x|dev shell (`dev`); ask human to reload|V1
 T7|.|guardrails via `.pklith`, 1 check per commit, planted violation each; ask human to reload|V1,V2,V6
 T8|.|waves via `sherd wave`, order: `pkgs` aarch64-darwin → `nix` checks → Linux via builder \| CI → `scripts` bump → CI → `docs`|V2,V3,V4
 T9|.|measure: darwin exec of untouched binary on both archs (invalid signature, R4); kernel refusal → gap question to owner, ⊥ re-sign|V3
