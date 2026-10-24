@@ -30,6 +30,9 @@ shellcheck|lint|shellcheck|**/*.sh, **/*.bash, **/*.bats, .envrc|shellcheck {{fi
 shfmt|format|shfmt|**/*.sh, **/*.bash, **/*.bats|shfmt --diff {{files}}|shfmt --write {{files}}|-|shell script not formatted
 # The registry judges itself: generated steps match .pklith.
 gen-check|gate|-|.pklith, hk.pklith.pkl, nix/pklith.nix|pklith gen --check|pklith gen|-|hk.pklith.pkl or nix/pklith.nix no longer matches .pklith; run `pklith gen`
+# Every tracked file has a type, no row is stale, every claim reaches its
+# files, and the mirror rules hold.
+pklith-check|gate|-|-|pklith check|-|-|a tracked file type has no row in .pklith, a row matches nothing, a claimed check never reaches its files, or a mirror rule fails
 
 ## types
 type|checks|min|exempt
@@ -42,7 +45,7 @@ nix|nixfmt, statix, deadnix, no-fakehash|-|-
 path:**/SPEC.md|markdownlint, mth-fmt, mth-check, sherd-check, sherd-nav, sherd-budget|-|-
 path:.context-limits|sherd-budget|-|-
 path:.envrc|shellcheck|-|-
-pklith|gen-check|-|-
+pklith|gen-check, pklith-check|-|-
 pkl|-|-|written by pklith (seed or gen)
 pre-commit|-|-|written by pklith (seed or gen)
 pre-push|-|-|written by pklith (seed or gen)
