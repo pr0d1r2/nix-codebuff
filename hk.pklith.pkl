@@ -49,6 +49,11 @@ steps: Mapping<String, Config.Step> = new {
     check = "command -v nixfmt >/dev/null 2>&1 || { echo 'nixfmt: nixfmt is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; nixfmt --check {{files}} || { echo 'nixfmt: nix file not formatted' >&2; exit 1; }"
     fix = "nixfmt {{files}}"
   }
+  ["shfmt"] {
+    glob = List("**/*.sh", "**/*.bash")
+    check = "command -v shfmt >/dev/null 2>&1 || { echo 'shfmt: shfmt is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; shfmt --diff {{files}} || { echo 'shfmt: shell script not formatted' >&2; exit 1; }"
+    fix = "shfmt --write {{files}}"
+  }
   ["typos"] {
     glob = List("**/*")
     check = "command -v typos >/dev/null 2>&1 || { echo 'typos: typos is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; typos --force-exclude {{files}} || { echo 'typos: misspelling; fix it or teach .typos.toml' >&2; exit 1; }"
