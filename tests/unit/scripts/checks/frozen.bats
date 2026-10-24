@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 # scripts/checks/frozen.sh (nix:V1, root V3, D4): `BIN --version` offline
 # behind a counting loopback proxy, on a fresh HOME. The listener is a
-# python3 stand-in for socat through the SOCAT seam that speaks socat's
+# perl stand-in for socat through the SOCAT seam that speaks socat's
 # `-d -d` log lines (measured on socat 1.8.1.3); every BIN is a fake. No
 # network: the fakes only reach 127.0.0.1.
 
@@ -13,23 +13,22 @@ setup() {
   mkdir -p stubs
   export STUB_LOG="$BATS_TEST_TMPDIR/socat.args"
   cat >stubs/socat <<'EOF'
-#!/usr/bin/env python3
-import os, socket, sys
-with open(os.environ["STUB_LOG"], "w") as f:
-    f.write(" ".join(sys.argv[1:]) + "\n")
-s = socket.socket()
-s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-s.bind(("127.0.0.1", 0))
-s.listen(16)
-port = s.getsockname()[1]
-log = "2026/10/24 10:36:20 socat[1] N "
-sys.stderr.write(log + "listening on LEN=16 AF=2 127.0.0.1:%d\n" % port)
-sys.stderr.flush()
-while True:
-    c, a = s.accept()
-    sys.stderr.write(log + "accepting connection from LEN=16 AF=2 127.0.0.1:%d on LEN=16 AF=2 127.0.0.1:%d\n" % (a[1], port))
-    sys.stderr.flush()
-    c.close()
+#!/usr/bin/env perl
+use strict;
+use IO::Socket::INET;
+open(my $f, ">", $ENV{STUB_LOG}) or die;
+print $f "@ARGV\n";
+close $f;
+my $s = IO::Socket::INET->new(LocalAddr => "127.0.0.1", LocalPort => 0, Listen => 16, ReuseAddr => 1) or die;
+my $port = $s->sockport;
+my $log = "2026/10/24 10:36:20 socat[1] N ";
+$| = 1;
+select(STDERR); $| = 1;
+print STDERR "${log}listening on LEN=16 AF=2 127.0.0.1:$port\n";
+while (my $c = $s->accept) {
+  printf STDERR "%saccepting connection from LEN=16 AF=2 127.0.0.1:%d on LEN=16 AF=2 127.0.0.1:%d\n", $log, $c->peerport, $port;
+  close $c;
+}
 EOF
   cat >stubs/socat-dead <<'EOF'
 #!/usr/bin/env bash
@@ -145,7 +144,8 @@ EOF
   chmod +x stubs/timeout
   TIMEOUT="$BATS_TEST_TMPDIR/stubs/timeout" run --separate-stderr "$check" ./clean 1.0.688
   [ "$status" -eq 1 ]
-  [ "$stderr" = "frozen: BIN --version timed out after 30 s (root V3)" ]
+  [ "${stderr_lines[0]}" = "frozen: BIN --version timed out after 30 s (root V3)" ]
+  [ "${stderr_lines[1]}" = "frozen: BIN --version stdout does not contain 1.0.688 (root V3)" ]
 }
 
 @test "stdin is closed, so a BIN waiting for input does not block" {
