@@ -1,0 +1,9 @@
+# Agent session state, direnv's cached shell, nix build links (root T5).
+.claude/
+.direnv/
+result*
+
+# Per-machine, never shared: direnv overrides and the name guard's
+# denylist (gate node).
+.envrc.local
+.private/
