@@ -110,11 +110,12 @@ T11|.|measure: writes outside `$HOME/.config/manicode` on fresh `HOME`; record i
 T12|~|CI written & linted 2026-10-24; ⊥ run until T13, `CACHIX_AUTH_TOKEN`, required checks (w/ approval)|V5,V7
 T13|.|GitHub repo `pr0d1r2/nix-codebuff` PUBLIC, first push, w/ approval; `gh repo view` ∀ named repo first. prompt names `nix-orca`, ⊥ resolvable 2026-10-24; owner: both repos go public same weekend ∴ ! PUBLIC before this repo's first push|V6,V7
 T14|.|bump PR author: token source for `upstream.yml` to open PR (owner decision); until then workflow fails red on newer release, ⊥ PR|V7
-T15|.|owner review of agent decisions: baseline as 2nd package, `meta.license = asl20`, `shipLogs` default upstream|-
+T15|x|ACCEPTED by owner 2026-10-24: owner review of agent decisions: baseline as 2nd package, `meta.license = asl20`, `shipLogs` default upstream|-
 T16|.|upstream issues w/ approval: invalid darwin signatures (R4); telemetry w/o opt-out (R10)|V7
 T17|.|pklith issues w/ approval: `pklith confirm` passes w/ empty `pre-commit` hook (reads `check` only; `paradigm/V22` wants ∀ hook); tool probe reads `[ ! -f` as tool `-f`|V7
-T18|.|this repo's own licence (owner decision before first push; ⊥ LICENSE file yet, README says undecided)|V7
+T18|x|this repo's own licence: MIT, owner 2026-10-24; `LICENSE`|V7
 T19|.|actlith issues filed w/ owner approval 2026-10-24: pr0d1r2/actlith#31, #32, #33, #34; when they land, render `build.yml` & `upstream.yml` from `.actlith` rows & drop `## hand-written`|V5
+T20|.|branch protection on `main` (owner 2026-10-24): PR required, admins included (`enforce_admins`), ⊥ force push, ⊥ delete; required checks once CI ran (T12); local `no-commit-to-branch` step (`paradigm/V23`)|V7
 
 ## §B BUGS
 
