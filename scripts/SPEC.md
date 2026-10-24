@@ -17,7 +17,7 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 
 ## §C CONSTRAINTS
 
-- `docs/SHELL.md` rules (`.` §C); env seams in header (`GH`, `NIX`, `CURL`); external tools stubbed in bats; ⊥ network in bats.
+- `docs/SHELL.md` rules (`.` §C); env seams in header (`GH`, `NIX`, `SOURCES` = output path); external tools stubbed in bats; ⊥ network in bats.
 - bump: list releases via `gh api --paginate repos/CodebuffAI/codebuff-community/releases`; keep tag `^v[0-9]+\.[0-9]+\.[0-9]+$`, `prerelease == false`, `draft == false`; pick max by semver (⊥ by date, ⊥ `releases/latest`) (`.` §C, R1).
 - bump: newer than `sources.json` version → ∀ 5 targets: asset ∃ in release else refuse; hash = `nix store prefetch-file --json <url>` SRI; GitHub `digest` `sha256:<hex>` → SRI; disagree → refuse. write `sources.json` once, after ∀ 5 pass (atomic: temp file + `mv`).
 - bump ⊥ edits any file but `sources.json`; ⊥ commits, ⊥ pushes (workflow does, `.` T14).
@@ -25,7 +25,7 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 
 ## §I INTERFACES
 
-- cmd: `scripts/bump.sh` → exit 0 bumped, 3 up to date, 1 refused (stderr names missing target | hash mismatch). `--check` → exit 3 up to date, 0 newer exists, writes nothing.
+- cmd: `scripts/bump.sh` → exit 0 bumped (new version on stdout), 3 up to date, 1 refused (stderr names ∀ missing target \| first hash mismatch w/ both hashes \| no stable tag \| asset w/o `sha256:` digest \| `gh` or `nix` failing: tool exit codes ⊥ leak as 2 or 3), 2 usage. `--check` → exit 3 up to date, 0 newer exists (version on stdout), writes nothing, ⊥ calls nix. progress on stderr. version order numeric per field. hex digest → SRI via `nix hash convert --hash-algo sha256 --to sri`. creates `pkgs/codebuff/` if absent; file mode 644.
 - cmd: `scripts/checks/<name>.sh` per `nix` §I check.
 - cmd: `scripts/dev/shell-hook.sh SYSTEM [ABSENT-TOOL...]` → `hk.pkl` & `.githooks/` ∃ & hk on `PATH` → `git config --local core.hooksPath .githooks`; ⊥ hk → stderr `nix-codebuff(shell): no hk on PATH, git hooks NOT installed`; absent tools named on stderr; exit 0 always, 2 = usage (`dev:V3`).
 - env: `GH_TOKEN` (CI).
@@ -41,7 +41,7 @@ V5: ∀ script has mirrored bats & passes w/ stubs only; orphan bats fails.
 ## §T TASKS
 
 id|status|task|cites
-T1|.|`bump.sh` + fixtures (release list w/ freebuff & beta tags, missing asset, digest mismatch)|V1,V2,V3,V4
+T1|x|`bump.sh` + fixtures (release list w/ freebuff & beta tags, missing asset, digest mismatch)|V1,V2,V3,V4
 T2|.|`checks/*.sh` per `nix` node|V5
 T3|.|`upstream.yml` via `.actlith`|V1
 T4|x|`dev/shell-hook.sh`, RED bats first|V5
