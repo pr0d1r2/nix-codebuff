@@ -2,7 +2,7 @@
 
 ## §G GOAL
 
-`nix/checks.nix`: flake checks proving frozen, offline & untouched (D4); each check = one script from `scripts/checks/` via `builtins.readFile`.
+`nix/checks.nix`: flake checks proving frozen, offline & untouched (D4); each script check = one script from `scripts/checks/` run by store path (`${../scripts/checks/<name>.sh}`), ⊥ inlined; `meta` & `overlay` = nix assertions, false → eval error naming the rule.
 
 ## §N NAV
 
@@ -18,7 +18,7 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 ## §C CONSTRAINTS
 
 - `docs/NIX.md`: `nix/checks.nix`, one script per check; ⊥ inline shell (`.` §C).
-- run in build sandbox: ⊥ network on Linux. darwin sandbox may allow network ∴ checks also point `HTTP_PROXY` `HTTPS_PROXY` `ALL_PROXY` at loopback listener & count connections.
+- run in build sandbox: ⊥ network on Linux. darwin sandbox may allow network (owner Mac 2026-10-24: `nix config show sandbox` = `false`, ∴ darwin checks run unsandboxed & the proxy count is the only network guard there) ∴ checks also point `HTTP_PROXY` `HTTPS_PROXY` `ALL_PROXY` at loopback listener & count connections.
 - fresh `HOME=$TMPDIR/home` per check.
 - checks run ∀ 4 sys where built; `codebuff-baseline` checks on `x86_64-linux`.
 - check inputs (wave 4): `frozen` socat coreutils findutils gnused gnugrep; `tree-sitter` coreutils gnused gnugrep; `untouched` gnutar gzip diffutils coreutils, + binutils on Linux (ELF branch ⊥ on darwin: `.` R17); `layout` findutils gnused gnugrep. `overlay` & meta (`pkgs:V5`) = nix assertions, ⊥ script.
@@ -28,7 +28,7 @@ sib|docs|human pages: README, SECURITY, CONTRIBUTING, LLM-DISCLAIMER
 - flake: `checks.<sys>.frozen` → `codebuff --version` offline, exit 0, stdout contains `sources.json` version; listener 0 connections; `$HOME` tree after run ⊥ executable, ⊥ `*.tar.gz`, ⊥ `*.part`.
 - flake: `checks.<sys>.tree-sitter` → `codebuff --smoke-tree-sitter` resolves store wasm path, ⊥ URL (`.` R9).
 - flake: `checks.<sys>.untouched` → darwin `pkgs:V1` | Linux `pkgs:V2`.
-- flake: `checks.<sys>.layout` → `pkgs:V3`, `pkgs:V4`, `pkgs:V5`.
+- flake: `checks.<sys>.layout` → `pkgs:V3`, `pkgs:V4`. `checks.<sys>.meta` → `pkgs:V5`. `checks.<sys>.frozen-cb` = `frozen` on `bin/cb`. `-baseline` twins of frozen, frozen-cb, tree-sitter, untouched, layout, meta on `x86_64-linux`.
 - flake: `checks.<sys>.overlay` → `.:V4`.
 
 ## §V INVARIANTS
@@ -40,8 +40,8 @@ V3: ∀ check script has mirrored bats (`scripts` node owns script & bats).
 ## §T TASKS
 
 id|status|task|cites
-T1|.|`checks.nix` skeleton & `frozen`|V1
-T2|.|`tree-sitter`, `untouched`, `layout`, `overlay`|V2,V3
+T1|x|`checks.nix` skeleton & `frozen`|V1
+T2|x|`tree-sitter`, `untouched`, `layout`, `overlay`, `meta`. built aarch64-darwin 2026-10-24; Linux & x86_64-darwin builds wait for root T10, T9|V2,V3
 
 ## §B BUGS
 

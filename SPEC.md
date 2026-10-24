@@ -103,7 +103,7 @@ T4|x|`.context-limits` from `sherd budget` + 12–20%|-
 T5|x|`.gitignore`: `.claude/`, `.direnv/`, `result*`, `.private/`|V6
 T6|x|dev shell (`dev`); ask human to reload|V1
 T7|x|guardrails via `.pklith`, 1 check per commit, planted violation each; 33 steps green on `hk check --all` 2026-10-24; human reloaded 2026-10-24|V1,V2,V6
-T8|~|waves (`sherd wave` sees ⊥ edges: it reads Rust imports only; order from spec deps): wave 1 `scripts` bump ✓ → wave 2 `pkgs` `sources.json` via bump + package aarch64-darwin ✓ → wave 3 root `flake.nix` ✓ → `nix` checks → Linux via builder \| CI → CI → `docs`|V2,V3,V4
+T8|~|waves (`sherd wave` sees ⊥ edges: it reads Rust imports only; order from spec deps): wave 1 `scripts` bump ✓ → wave 2 `pkgs` `sources.json` via bump + package aarch64-darwin ✓ → wave 3 root `flake.nix` ✓ → wave 4 check scripts ✓ → wave 5 `nix` checks ✓ → Linux via builder \| CI → CI → `docs`|V2,V3,V4
 T9|~|measure: darwin exec of untouched binary on both archs (invalid signature, R4); kernel refusal → gap question to owner, ⊥ re-sign. arm64 runs (R16); x86_64 pending (owner Intel Mac)|V3
 T10|.|measure: Linux `autoPatchelfHook` keeps Bun payload: `codebuff --version` on x86_64-linux & aarch64-linux after patch|V3
 T11|.|measure: writes outside `$HOME/.config/manicode` on fresh `HOME`; record in §R; frozen check covers them|V3
