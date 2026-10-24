@@ -1,6 +1,7 @@
-DRAFT INPUT. This file is the prompt for the first spec run of this repository.
-Once that run lands SPEC.md and its node specs, they are the law; where
-they differ from this file, they win. Written 2026-10-24 by an agent
+HISTORICAL INPUT. This file was the prompt for the first ck:spec run,
+which landed SPEC.md and its node specs on 2026-10-24. SPEC.md and the
+node specs it federates are the law; where they differ from this file,
+they win. Written 2026-10-24 by an agent
 working in nix-orca, from the owner's decision there (nix-orca root T18,
 D26), as a handoff to a separate session.
 
