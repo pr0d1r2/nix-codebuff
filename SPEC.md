@@ -41,3 +41,23 @@ self|.|-
 - outward acts ! explicit human approval: GitHub repo creation, first push, `CACHIX_AUTH_TOKEN`, bump-PR token, release, upstream issue.
 - consumer wiring (fleet agent set) = consumer's own PR after release, ⊥ this repo's work (D8).
 - non-goals: Windows, npm launcher, Freebuff & Codebuff's other products, source build, patching Codebuff behaviour.
+
+## §I INTERFACES
+
+- input:
+  ```nix
+  inputs = {
+    nixpkgs-lock.url = "github:pr0d1r2/nixpkgs-lock";
+    nixpkgs.follows = "nixpkgs-lock/nixpkgs";
+  };
+  ```
+- flake: `packages.<sys>.codebuff` ∀ 4 sys; `packages.<sys>.default` ≡ `codebuff` (`pkgs` node).
+- flake: `packages.x86_64-linux.codebuff-baseline` (`pkgs` node).
+- flake: `overlays.default` → adds exactly `codebuff` (D, goal 2).
+- flake: `checks.<sys>.*` (`nix` node). `devShells` from `dev/flake.nix` (`dev` node).
+- cmd: `codebuff`, `cb` → same wrapper; `codebuff --version` → contains `sources.json` version.
+- file: `pkgs/codebuff/sources.json` — version + per-target URL & SRI hash (`pkgs` node §I).
+- cmd: `scripts/bump.sh` (`scripts` node).
+- cachix: substituter `https://pr0d1r2.cachix.org`, key `pr0d1r2.cachix.org-1:NfWjbhgAj41byXhCKiaE+av3Vnphm1fTezHXEGsiQIM=` (from `nix-hk` `flake.nix` `nixConfig`).
+- CI: `.github/workflows/build.yml`, `upstream.yml` from `.actlith`.
+- env: `CACHIX_AUTH_TOKEN` (CI secret, per-cache WRITE token).
