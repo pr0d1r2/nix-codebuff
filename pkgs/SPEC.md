@@ -12,6 +12,7 @@ self|pkgs|`pkgs/codebuff/package.nix`, `sources.json`: fetch, install, wrap
 sib|nix|`nix/checks.nix`: frozen, offline, untouched, layout, overlay checks
 sib|scripts|bash for bump & checks; mirrored bats
 sib|dev|dev shell flake, hook install on entry
+sib|gate|gate scripts: lock-graph, name, fakehash guards; their bats
 
 ## §C CONSTRAINTS
 
