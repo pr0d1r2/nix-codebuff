@@ -119,6 +119,11 @@ steps: Mapping<String, Config.Step> = new {
     glob = List("**/*")
     check = "command -v bash >/dev/null 2>&1 || { echo 'name-guard: bash is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; bash gate/name-guard.sh {{files}} || { echo 'name-guard: a private name is staged (root V6); the hit names the denylist entry, never the name' >&2; exit 1; }"
   }
+  ["gen-check"] {
+    glob = List(".pklith", "hk.pklith.pkl", "nix/pklith.nix")
+    check = "command -v pklith >/dev/null 2>&1 || { echo 'gen-check: pklith is not on PATH; re-enter the dev shell. A MISSING TOOL, not a finding.' >&2; exit 1; }; pklith gen --check || { echo 'gen-check: hk.pklith.pkl or nix/pklith.nix no longer matches .pklith; run `pklith gen`' >&2; exit 1; }"
+    fix = "pklith gen"
+  }
 }
 
 push: Mapping<String, Config.Step> = new {

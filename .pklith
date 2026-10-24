@@ -28,6 +28,8 @@ bats-unit|coverage|bats|-|bats --recursive tests|-|-|a bats test under tests/ fa
 shellcheck|lint|shellcheck|**/*.sh, **/*.bash, **/*.bats, .envrc|shellcheck {{files}}|-|-|shell script finding
 # Overrides the catalog row: shfmt reads bats from the extension.
 shfmt|format|shfmt|**/*.sh, **/*.bash, **/*.bats|shfmt --diff {{files}}|shfmt --write {{files}}|-|shell script not formatted
+# The registry judges itself: generated steps match .pklith.
+gen-check|gate|-|.pklith, hk.pklith.pkl, nix/pklith.nix|pklith gen --check|pklith gen|-|hk.pklith.pkl or nix/pklith.nix no longer matches .pklith; run `pklith gen`
 
 ## types
 type|checks|min|exempt
@@ -40,7 +42,7 @@ nix|nixfmt, statix, deadnix, no-fakehash|-|-
 path:**/SPEC.md|markdownlint, mth-fmt, mth-check, sherd-check, sherd-nav, sherd-budget|-|-
 path:.context-limits|sherd-budget|-|-
 path:.envrc|shellcheck|-|-
-pklith|-|-|written by pklith (seed or gen)
+pklith|gen-check|-|-
 pkl|-|-|written by pklith (seed or gen)
 pre-commit|-|-|written by pklith (seed or gen)
 pre-push|-|-|written by pklith (seed or gen)
